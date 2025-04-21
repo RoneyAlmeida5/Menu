@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../assets/Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
+import { FiLogIn } from "react-icons/fi";
+import { MdOutlineRestaurantMenu, MdNoDrinks } from "react-icons/md";
 import {
-  FiMenu,
-  FiGift,
-  FiShoppingCart,
-  FiLayers,
-  FiLogIn,
-  FiTag,
-  FiCoffee,
-  FiTrash2,
-} from "react-icons/fi";
+  GiCakeSlice,
+  GiHamburger,
+  GiPotato,
+  GiChickenOven,
+} from "react-icons/gi";
+import { BiSolidFoodMenu } from "react-icons/bi";
 
 function Header() {
   const [showNav, setShowNav] = useState(false);
@@ -22,15 +21,14 @@ function Header() {
   }, []);
 
   const menuItems = [
-    { name: "Menu completo", icon: <FiMenu /> },
-    { name: "Bolos", icon: <FiGift /> },
-    { name: "Hambürger", icon: <FiShoppingCart /> },
-    { name: "Acompanhamentos", icon: <FiLayers /> },
+    { name: "Menu Completo", icon: <BiSolidFoodMenu /> },
+    { name: "Bolos", icon: <GiCakeSlice /> },
+    { name: "Hambürger", icon: <GiHamburger /> },
+    { name: "Acompanhamentos", icon: <MdOutlineRestaurantMenu /> },
     { name: "Entradas", icon: <FiLogIn /> },
-    { name: "Batatas", icon: <FiTag /> },
-    { name: "Frangas", icon: <FiCoffee /> },
-    { name: "Bebidas", icon: <FiCoffee /> },
-    { name: "Descartáveis", icon: <FiTrash2 /> },
+    { name: "Batatas", icon: <GiPotato /> },
+    { name: "Frangos", icon: <GiChickenOven /> },
+    { name: "Bebidas", icon: <MdNoDrinks /> },
   ];
 
   return (
