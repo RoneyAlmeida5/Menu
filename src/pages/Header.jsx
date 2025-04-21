@@ -35,23 +35,16 @@ function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 h-full z-10 bg-gray-100 dark:bg-gray-900 dark:text-white text-black p-4 transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-full z-10 bg-gray-900 dark:bg-gray-900 dark:text-white text-black p-4 transition-all duration-300 ${
         showNav ? "w-64" : "w-16"
       }`}
     >
-      {/* Toggle Always Visible */}
-      <div className="flex items-center justify-center mb-6 ml-7">
+      <div className="flex items-center justify-center mb-6 ml-4">
         <ThemeToggle />
       </div>
-
-      {/* Logo Only When Expanded */}
-      {showNav && (
-        <div className="flex items-center justify-center mb-6">
-          <img src={Logo} className="w-36 h-36 object-contain" alt="Logo" />
-        </div>
-      )}
-
-      {/* Navigation Icons Always Visible, Labels Only When Expanded */}
+      <div className="flex items-center justify-center mb-6">
+        <img src={Logo} className="w-40 h-40 object-contain" alt="Logo" />
+      </div>
       <nav>
         <ul className="flex flex-col gap-3">
           {menuItems.map((item, idx) => (

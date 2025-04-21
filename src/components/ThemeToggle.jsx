@@ -26,7 +26,7 @@ function ThemeToggle() {
         onChange={() => setDarkMode(!darkMode)}
         className="peer hidden"
       />
-      <div className="relative flex w-20 h-9 rounded-full bg-gradient-to-r from-gray-300 to-gray-600 peer-checked:from-yellow-200 peer-checked:to-zinc-500 transition-colors duration-500">
+      <div className="relative flex w-18 h-9 rounded-full bg-gradient-to-r from-gray-300 to-gray-600 peer-checked:from-yellow-200 peer-checked:to-zinc-500 transition-colors duration-500">
         <div
           className={`
             absolute top-1 left-1 h-7 w-7 bg-gray-200 rounded-full shadow-md 
