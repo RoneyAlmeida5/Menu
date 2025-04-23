@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useCart } from "../contexts/CartContext";
-import { FiSearch } from "react-icons/fi";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+// COMPONENTS & CONTEXT
 import CartModal from "../components/CartModal";
+import ShoppingCartButton from "../components/ShoppingCartButton";
+import SearchBar from "../components/SearchBar";
 import { useNavigation } from "../contexts/NavigationContext";
 
 const HeaderSearch = () => {
-  const { totalQuantity } = useCart();
-  const { isSidebarOpen } = useNavigation();
+  const { isSidebarOpen, updateSearchTerm } = useNavigation();
   const [cartOpen, setCartOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    updateSearchTerm(term); // Atualiza o estado no contexto
+  };
 
   return (
     <>
@@ -17,36 +22,10 @@ const HeaderSearch = () => {
         style={{ left: isSidebarOpen ? "16rem" : "5rem" }}
       >
         <div className="flex items-center justify-between w-full px-6">
-          {/* Input */}
-          <div className="relative">
-            <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
-              <FiSearch />
-            </span>
-            <input
-              type="text"
-              placeholder="Pesquise seu produto"
-              className="w-80 pl-10 p-2 rounded-xl bg-gray-800 text-white placeholder-gray-400"
-            />
-          </div>
-
-          {/* Carrinho */}
-          <div className="relative ml-4 overflow-visible">
-            <button
-              onClick={() => setCartOpen(true)}
-              aria-label="Carrinho"
-              className="relative cursor-pointer p-2 rounded-full hover:bg-gray-500 dark:hover:bg-gray-700 transition"
-            >
-              <ShoppingCartIcon className="text-2xl text-white" />
-              {totalQuantity > 0 && (
-                <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 border-2 border-black dark:border-gray-900">
-                  {totalQuantity}
-                </span>
-              )}
-            </button>
-          </div>
+          <SearchBar onSearch={handleSearch} />
+          <ShoppingCartButton onCartClick={() => setCartOpen(true)} />
         </div>
       </div>
-
       <CartModal open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
