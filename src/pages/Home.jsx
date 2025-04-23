@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ProductModal from "../components/ProductModal";
+import ListProducts from "../components/ListProducts";
 import { useCart } from "../contexts/CartContext";
 import { useNavigation } from "../contexts/NavigationContext";
 // MATERIAL UI
@@ -19,6 +20,7 @@ function Home() {
 
   const { addToCart } = useCart();
   const { isSidebarOpen } = useNavigation();
+  const { selectedTitle } = useNavigation();
 
   const items = Array.from({ length: 6 }, (_, i) => ({
     id: i + 1,
@@ -53,41 +55,10 @@ function Home() {
             className="rounded-lg w-full h-70 object-cover"
           />
         </div>
-        {/* Texto Selecionado */}
-        <h2 className="text-2xl font-semibold mb-4">Bolos</h2>
-        {/* Lista de produtos */}
+        <h2 className="text-2xl font-semibold mb-4">{selectedTitle}</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((item) => (
-            <div
-              key={item.id}
-              className="bg-gray-800 dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 transition-transform"
-            >
-              <img
-                src={item.img}
-                alt={item.title}
-                className="w-full h-32 object-cover rounded-md mb-2"
-              />
-              <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-              <p className="text-gray-400">{item.price}</p>
-              <div className="mt-4 flex justify-end space-x-2">
-                <Tooltip title="Descrição" arrow>
-                  <IconButton
-                    onClick={() => handleOpen(item, "desc")}
-                    color="inherit"
-                  >
-                    <DescriptionRoundedIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Adicionar ao carrinho" arrow>
-                  <IconButton
-                    onClick={() => handleOpen(item, "add")}
-                    color="inherit"
-                  >
-                    <AddCircleRoundedIcon />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </div>
+            <ListProducts key={item.id} item={item} handleOpen={handleOpen} />
           ))}
         </div>
         <ProductModal

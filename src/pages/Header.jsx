@@ -14,12 +14,13 @@ import { useNavigation } from "../contexts/NavigationContext";
 
 function Header() {
   const headerRef = useRef(null);
-  const { isSidebarOpen, toggleSidebar } = useNavigation();
+  const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedTitle } =
+    useNavigation();
 
   const menuItems = [
     { name: "Menu Completo", icon: <BiSolidFoodMenu /> },
     { name: "Bolos", icon: <GiCakeSlice /> },
-    { name: "Hambürger", icon: <GiHamburger /> },
+    { name: "Hamburger", icon: <GiHamburger /> },
     { name: "Acompanhamentos", icon: <MdOutlineRestaurantMenu /> },
     { name: "Entradas", icon: <FiLogIn /> },
     { name: "Batatas", icon: <GiPotato /> },
@@ -51,6 +52,10 @@ function Header() {
     };
   }, [toggleSidebar]);
 
+  const handleMenuItemClick = (itemName) => {
+    updateSelectedTitle(itemName);
+  };
+
   return (
     <header
       ref={headerRef}
@@ -70,10 +75,11 @@ function Header() {
             <li
               key={idx}
               className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${
-                item.name === "Bolos"
+                item.name === selectedTitle // Verifica se o item atual é o selecionado
                   ? "bg-gray-700 text-white dark:bg-gray-600"
                   : "text-gray-400 hover:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               }`}
+              onClick={() => handleMenuItemClick(item.name)}
             >
               {item.icon}
               {isSidebarOpen && <span>{item.name}</span>}{" "}
