@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ProductModal from "../components/ProductModal";
 import { useCart } from "../contexts/CartContext";
+import { useNavigation } from "../contexts/NavigationContext";
 // MATERIAL UI
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
@@ -11,15 +12,14 @@ import Banner from "../assets/banner.jpeg";
 import BannerCard from "../assets/bannercard.jpeg";
 
 function Home() {
-  const [showHeader, setShowHeader] = useState(false);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("desc");
   const [activeItem, setActiveItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  const { addToCart } = useCart(); // 👈 usa a função do contexto
+  const { addToCart } = useCart();
+  const { isSidebarOpen } = useNavigation();
 
-  // Simulação de dados dos produtos
   const items = Array.from({ length: 6 }, (_, i) => ({
     id: i + 1,
     title: "Bolo de Chocolate com Morango",
@@ -38,18 +38,10 @@ function Home() {
 
   const handleClose = () => setOpen(false);
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setShowHeader(e.clientX < 50);
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   return (
     <div
       className={`${
-        showHeader ? "ml-64" : "ml-20"
+        isSidebarOpen ? "ml-64" : "ml-20"
       } mt-20 bg-gray-700 text-white mb-4 pt-6 rounded-2xl transition-all duration-300 h-[calc(100vh-6rem)]`}
     >
       <div className="h-full overflow-y-auto px-6 pb-6">
@@ -61,9 +53,8 @@ function Home() {
             className="rounded-lg w-full h-70 object-cover"
           />
         </div>
-
+        {/* Texto Selecionado */}
         <h2 className="text-2xl font-semibold mb-4">Bolos</h2>
-
         {/* Lista de produtos */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((item) => (
@@ -99,15 +90,13 @@ function Home() {
             </div>
           ))}
         </div>
-
-        {/* Modal de produto */}
         <ProductModal
           open={open}
           onClose={handleClose}
           item={activeItem}
           mode={mode}
           onConfirm={(item, quantity) => {
-            addToCart(item, quantity); // 👈 adiciona ao carrinho com quantidade
+            addToCart(item, quantity);
           }}
         />
       </div>

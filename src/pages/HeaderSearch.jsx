@@ -3,26 +3,18 @@ import { useCart } from "../contexts/CartContext";
 import { FiSearch } from "react-icons/fi";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CartModal from "../components/CartModal";
+import { useNavigation } from "../contexts/NavigationContext";
 
 const HeaderSearch = () => {
   const { totalQuantity } = useCart();
-  const [showHeader, setShowHeader] = useState(false);
+  const { isSidebarOpen } = useNavigation();
   const [cartOpen, setCartOpen] = useState(false);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setShowHeader(e.clientX < 50);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   return (
     <>
       <div
         className="fixed top-0 left-0 right-0 z-50 px-4 py-3 bg-gray-900 py-4 transition-all duration-300"
-        style={{ left: showHeader ? "16rem" : "5rem" }}
+        style={{ left: isSidebarOpen ? "16rem" : "5rem" }}
       >
         <div className="flex items-center justify-between w-full px-6">
           {/* Input */}

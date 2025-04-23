@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Logo from "../assets/Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
 import { FiLogIn } from "react-icons/fi";
@@ -10,15 +10,11 @@ import {
   GiChickenOven,
 } from "react-icons/gi";
 import { BiSolidFoodMenu } from "react-icons/bi";
+import { useNavigation } from "../contexts/NavigationContext";
 
 function Header() {
-  const [showNav, setShowNav] = useState(false);
-
-  useEffect(() => {
-    const onMouseMove = (e) => setShowNav(e.clientX < 50);
-    window.addEventListener("mousemove", onMouseMove);
-    return () => window.removeEventListener("mousemove", onMouseMove);
-  }, []);
+  const headerRef = useRef(null);
+  const { isSidebarOpen, toggleSidebar } = useNavigation();
 
   const menuItems = [
     { name: "Menu Completo", icon: <BiSolidFoodMenu /> },
@@ -31,10 +27,35 @@ function Header() {
     { name: "Bebidas", icon: <MdNoDrinks /> },
   ];
 
+  useEffect(() => {
+    const headerElement = headerRef.current;
+
+    const handleMouseEnter = () => {
+      toggleSidebar(true);
+    };
+
+    const handleMouseLeave = () => {
+      toggleSidebar(false);
+    };
+
+    if (headerElement) {
+      headerElement.addEventListener("mouseenter", handleMouseEnter);
+      headerElement.addEventListener("mouseleave", handleMouseLeave);
+    }
+
+    return () => {
+      if (headerElement) {
+        headerElement.removeEventListener("mouseenter", handleMouseEnter);
+        headerElement.removeEventListener("mouseleave", handleMouseLeave);
+      }
+    };
+  }, [toggleSidebar]);
+
   return (
     <header
+      ref={headerRef}
       className={`fixed top-0 left-0 h-full z-10 bg-gray-900 dark:bg-gray-900 dark:text-white text-black p-4 transition-all duration-300 ${
-        showNav ? "w-64" : "w-16"
+        isSidebarOpen ? "w-64" : "w-17"
       }`}
     >
       <div className="flex items-center justify-center mb-6 ml-4">
@@ -55,7 +76,8 @@ function Header() {
               }`}
             >
               {item.icon}
-              {showNav && <span>{item.name}</span>}
+              {isSidebarOpen && <span>{item.name}</span>}{" "}
+              {/* Use o estado do contexto */}
             </li>
           ))}
         </ul>
