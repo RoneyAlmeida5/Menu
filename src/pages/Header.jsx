@@ -83,7 +83,6 @@ function Header() {
             >
               {item.icon}
               {isSidebarOpen && <span>{item.name}</span>}{" "}
-              {/* Use o estado do contexto */}
             </li>
           ))}
         </ul>

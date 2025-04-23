@@ -6,13 +6,15 @@ import SearchBar from "../components/SearchBar";
 import { useNavigation } from "../contexts/NavigationContext";
 
 const HeaderSearch = () => {
-  const { isSidebarOpen, updateSearchTerm } = useNavigation();
+  const { isSidebarOpen, updateSearchTerm, updateSelectedTitle } =
+    useNavigation();
   const [cartOpen, setCartOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    updateSearchTerm(term); // Atualiza o estado no contexto
+    updateSearchTerm(term);
+    updateSelectedTitle(term);
   };
 
   return (

@@ -7,7 +7,7 @@ export const useNavigation = () => useContext(NavigationContext);
 export const NavigationProvider = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState("Bolos");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); // Novo estado para o termo de busca
 
   const toggleSidebar = (isOpen) => {
     setIsSidebarOpen(isOpen);

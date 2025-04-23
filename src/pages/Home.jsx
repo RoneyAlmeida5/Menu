@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductModal from "../components/ProductModal";
 import ListProducts from "../components/ListProducts";
 import BannerPromo from "../components/BannerPromo";
@@ -61,7 +61,9 @@ function Home() {
     >
       <div className="h-full overflow-y-auto px-6 pb-6">
         <BannerPromo />
-        <h2 className="text-2xl font-semibold mb-4">{selectedTitle}</h2>
+        <h2 className="text-2xl font-semibold mb-4">
+          {searchTerm ? `Pesquisa: ${searchTerm}` : selectedTitle}
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredItems.map((item) => (
             <ListProducts key={item.id} item={item} handleOpen={handleOpen} />
