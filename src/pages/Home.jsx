@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ProductModal from "../components/ProductModal";
-import ListProducts from "../components/ListProducts";
+import CardProducts from "../components/CardProducts";
 import BannerPromo from "../components/BannerPromo";
 import { useCart } from "../contexts/CartContext";
 import { useNavigation } from "../contexts/NavigationContext";
-// IMAGE
 import BannerCard from "../assets/bannercard.jpeg";
 
 function Home() {
@@ -15,35 +14,43 @@ function Home() {
   const { addToCart } = useCart();
   const { isSidebarOpen, selectedTitle, searchTerm } = useNavigation();
 
-  const initialItems = Array.from({ length: 1 }, (_, i) => ({
-    id: 1,
-    title: "Bolo de Chocolate com Morango",
-    price: "R$ 49,90",
-    img: BannerCard,
-    description:
-      "Delicioso bolo de chocolate com morango fresco e cobertura cremosa.",
-  }));
+  const initialItems = [
+    {
+      id: 1,
+      title: "Bolo de Chocolate com Morango",
+      price: "R$ 49,90",
+      img: BannerCard,
+      description:
+        "Delicioso bolo de chocolate com morango fresco e cobertura cremosa.",
+      category: "Bolos",
+    },
+    {
+      id: 7,
+      title: "Hambúrguer Clássico",
+      price: "R$ 29,90",
+      img: "https://blog.biglar.com.br/wp-content/uploads/2024/08/iStock-1398630614.jpg",
+      description:
+        "Um delicioso hambúrguer com carne suculenta, queijo, alface e tomate.",
+      category: "Hamburger",
+    },
+    {
+      id: 8,
+      title: "Sorvete Napolitano",
+      price: "R$ 19,90",
+      img: "https://blog.gsuplementos.com.br/wp-content/uploads/2020/11/iStock-1173381958.jpg",
+      description: "Sorvete bem gelado e com 3 cores",
+      category: "Bebidas",
+    },
+  ];
 
-  initialItems.push({
-    id: 7,
-    title: "Hambúrguer Clássico",
-    price: "R$ 29,90",
-    img: "https://blog.biglar.com.br/wp-content/uploads/2024/08/iStock-1398630614.jpg",
-    description:
-      "Um delicioso hambúrguer com carne suculenta, queijo, alface e tomate.",
+  const filteredItems = initialItems.filter((item) => {
+    const matchesSearch = item.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedTitle === "Menu Completo" || item.category === selectedTitle;
+    return matchesSearch && matchesCategory;
   });
-
-  initialItems.push({
-    id: 8,
-    title: "Sorvete Napolitano",
-    price: "R$ 19,90",
-    img: "https://blog.gsuplementos.com.br/wp-content/uploads/2020/11/iStock-1173381958.jpg",
-    description: "Sortevete bem gelado e com 3 cores",
-  });
-
-  const filteredItems = initialItems.filter((item) =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleOpen = (item, action) => {
     setActiveItem(item);
@@ -51,6 +58,7 @@ function Home() {
     setQuantity(1);
     setOpen(true);
   };
+
   const handleClose = () => setOpen(false);
 
   return (
@@ -66,7 +74,7 @@ function Home() {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredItems.map((item) => (
-            <ListProducts key={item.id} item={item} handleOpen={handleOpen} />
+            <CardProducts key={item.id} item={item} handleOpen={handleOpen} />
           ))}
         </div>
         <ProductModal

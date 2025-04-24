@@ -3,9 +3,9 @@ import { IconButton, Tooltip } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 
-const ListProducts = ({ item, handleOpen }) => {
+const CardProducts = ({ item, handleOpen }) => {
   return (
-    <div className="bg-gray-800 dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 transition-transform">
+    <div className="bg-gray-800 dark:bg-gray-800 p-4 rounded-lg shadow-md hover:scale-105 transition-transform">
       <img
         src={item.img}
         alt={item.title}
@@ -29,4 +29,4 @@ const ListProducts = ({ item, handleOpen }) => {
   );
 };
 
-export default ListProducts;
+export default CardProducts;

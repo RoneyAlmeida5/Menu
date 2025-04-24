@@ -14,7 +14,6 @@ const HeaderSearch = () => {
   const handleSearch = (term) => {
     setSearchTerm(term);
     updateSearchTerm(term);
-    updateSelectedTitle(term);
   };
 
   return (
