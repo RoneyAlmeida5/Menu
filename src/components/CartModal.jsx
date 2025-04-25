@@ -12,6 +12,13 @@ import { useCart } from "../contexts/CartContext";
 const CartModal = ({ open, onClose }) => {
   const { cartItems, removeFromCart, totalQuantity } = useCart();
 
+  const totalPrice = cartItems.reduce((acc, item) => {
+    const priceNumber = parseFloat(
+      item.price.replace("R$", "").replace(",", ".")
+    );
+    return acc + priceNumber * item.quantity;
+  }, 0);
+
   const handleSendWhatsApp = () => {
     const phone = "5521964895107";
     if (cartItems.length === 0) return;
@@ -20,7 +27,9 @@ const CartModal = ({ open, onClose }) => {
       .map((item) => `• ${item.title} (Qtd: ${item.quantity})`)
       .join("\n");
 
-    const finalMessage = `Olá! Gostaria de finalizar o pedido com os seguintes itens:\n\n${message}\n\nTotal de itens: ${totalQuantity}`;
+    const finalMessage = `Olá! Gostaria de finalizar o pedido com os seguintes itens:\n\n${message}\n\nTotal de itens: ${totalQuantity}\nTotal a pagar: R$ ${totalPrice
+      .toFixed(2)
+      .replace(".", ",")}`;
 
     const encodedMessage = encodeURIComponent(finalMessage);
     const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
@@ -85,7 +94,13 @@ const CartModal = ({ open, onClose }) => {
           ))
         )}
       </DialogContent>
-
+      {cartItems.length > 0 && (
+        <div className="flex justify-end mt-4 px-2">
+          <Typography variant="h6">
+            Total: R$ {totalPrice.toFixed(2).replace(".", ",")}
+          </Typography>
+        </div>
+      )}
       <div className="flex items-center justify-center gap-4 mt-5">
         <button
           onClick={handleSendWhatsApp}
