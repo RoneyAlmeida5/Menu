@@ -77,7 +77,12 @@ function Home({ theme }) {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredItems.map((item) => (
-            <CardProducts key={item.id} item={item} handleOpen={handleOpen} />
+            <CardProducts
+              key={item.id}
+              item={item}
+              handleOpen={handleOpen}
+              theme={theme}
+            />
           ))}
         </div>
         <ProductModal
@@ -85,6 +90,7 @@ function Home({ theme }) {
           onClose={handleClose}
           item={activeItem}
           mode={mode}
+          theme={theme}
           onConfirm={(item, quantity) => {
             addToCart(item, quantity);
           }}

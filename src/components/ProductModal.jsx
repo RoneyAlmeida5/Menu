@@ -24,11 +24,11 @@ const ProductModal = ({
   }, [open]);
 
   // Determina as classes de fundo e texto com base no tema
-  const backgroundClass =
-    theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";
   const buttonClass =
     theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-700 text-gray-100";
   const borderClass = theme === "dark" ? "border-gray-500" : "border-gray-300";
+  const textModal = theme === "dark" ? "text-gray-200" : "text-gray-900";
+  const textValue = theme === "dark" ? "text-gray-400" : "text-gray-500";
 
   return (
     <Dialog
@@ -56,13 +56,13 @@ const ProductModal = ({
           />
         )}
         {mode === "desc" ? (
-          <Typography className="text-gray-200">{item?.description}</Typography>
+          <Typography className={textModal}>{item?.description}</Typography>
         ) : (
           <>
-            <Typography className="text-gray-200">
+            <Typography className={textModal}>
               Deseja adicionar <strong>{item?.title}</strong> ao carrinho?
             </Typography>
-            <Typography className="text-gray-400 pt-3">
+            <Typography className={`${textValue} text-gray-400 pt-3`}>
               {item?.price}
             </Typography>
             <div className="flex items-center justify-center gap-4 mt-6">
