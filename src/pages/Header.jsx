@@ -14,6 +14,7 @@ import { useNavigation } from "../contexts/NavigationContext";
 
 function Header({ theme, setTheme }) {
   const headerRef = useRef(null);
+  const [showText, setShowText] = useState(false);
   const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedTitle } =
     useNavigation();
 
@@ -27,6 +28,17 @@ function Header({ theme, setTheme }) {
     { name: "Frangos", icon: <GiChickenOven /> },
     { name: "Bebidas", icon: <MdNoDrinks /> },
   ];
+
+  useEffect(() => {
+    let timeout;
+    if (isSidebarOpen) {
+      timeout = setTimeout(() => setShowText(true), 145);
+    } else {
+      setShowText(false);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [isSidebarOpen]);
 
   useEffect(() => {
     const headerElement = headerRef.current;
@@ -86,7 +98,7 @@ function Header({ theme, setTheme }) {
               onClick={() => handleMenuItemClick(item.name)}
             >
               {item.icon}
-              {isSidebarOpen && <span>{item.name}</span>}
+              {showText && <span>{item.name}</span>}
             </li>
           ))}
         </ul>
