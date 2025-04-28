@@ -6,7 +6,7 @@ import { useCart } from "../contexts/CartContext";
 import { useNavigation } from "../contexts/NavigationContext";
 import BannerCard from "../assets/bannercard.jpeg";
 
-function Home() {
+function Home({ theme }) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("desc");
   const [activeItem, setActiveItem] = useState(null);
@@ -61,11 +61,14 @@ function Home() {
 
   const handleClose = () => setOpen(false);
 
+  const backgroundClass =
+    theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-300 text-black";
+
   return (
     <div
       className={`${
         isSidebarOpen ? "ml-64" : "ml-20"
-      } mt-20 bg-gray-700 text-white mb-4 pt-6 rounded-2xl transition-all duration-300 h-[calc(100vh-6rem)]`}
+      } mt-20 ${backgroundClass} mb-4 pt-6 rounded-2xl transition-all duration-300 h-[calc(100vh-6rem)]`}
     >
       <div className="h-full overflow-y-auto px-6 pb-6">
         <BannerPromo />

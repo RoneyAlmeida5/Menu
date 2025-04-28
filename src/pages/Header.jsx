@@ -12,7 +12,7 @@ import {
 import { BiSolidFoodMenu } from "react-icons/bi";
 import { useNavigation } from "../contexts/NavigationContext";
 
-function Header() {
+function Header({ theme, setTheme }) {
   const headerRef = useRef(null);
   const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedTitle } =
     useNavigation();
@@ -59,12 +59,12 @@ function Header() {
   return (
     <header
       ref={headerRef}
-      className={`fixed top-0 left-0 h-full z-10 bg-gray-900 dark:bg-gray-900 dark:text-white text-black p-4 transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-full z-10 p-4 transition-all duration-300 ${
         isSidebarOpen ? "w-64" : "w-17"
-      }`}
+      } ${theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black"}`}
     >
       <div className="flex items-center justify-center mb-6 ml-4">
-        <ThemeToggle />
+        <ThemeToggle theme={theme} setTheme={setTheme} />
       </div>
       <div className="flex items-center justify-center mb-6">
         <img src={Logo} className="w-40 h-40 object-contain" alt="Logo" />
@@ -75,14 +75,18 @@ function Header() {
             <li
               key={idx}
               className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${
-                item.name === selectedTitle // Verifica se o item atual é o selecionado
-                  ? "bg-gray-700 text-white dark:bg-gray-600"
-                  : "text-gray-400 hover:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                item.name === selectedTitle
+                  ? theme === "dark"
+                    ? "bg-gray-600 text-white"
+                    : "bg-gray-300 text-black"
+                  : theme === "dark"
+                  ? "text-gray-300 hover:bg-gray-700"
+                  : "text-gray-600 hover:bg-gray-200"
               }`}
               onClick={() => handleMenuItemClick(item.name)}
             >
               {item.icon}
-              {isSidebarOpen && <span>{item.name}</span>}{" "}
+              {isSidebarOpen && <span>{item.name}</span>}
             </li>
           ))}
         </ul>

@@ -5,12 +5,24 @@
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  background-color: #101828;
   margin: 0;
   padding: 0;
 }
+
+html[data-theme="light"] {
+  --background-color: #ffffff;
+  --text-color: #000000;
+}
+
+html[data-theme="dark"] {
+  --background-color: #101828;
+  --text-color: #ffffff;
+}
+
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }

@@ -9,12 +9,26 @@ import {
   Typography,
 } from "@mui/material";
 
-const ProductModal = ({ open, onClose, item, mode = "desc", onConfirm }) => {
+const ProductModal = ({
+  open,
+  onClose,
+  item,
+  mode = "desc",
+  onConfirm,
+  theme,
+}) => {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (open) setQuantity(1);
   }, [open]);
+
+  // Determina as classes de fundo e texto com base no tema
+  const backgroundClass =
+    theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";
+  const buttonClass =
+    theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-700 text-gray-100";
+  const borderClass = theme === "dark" ? "border-gray-500" : "border-gray-300";
 
   return (
     <Dialog
@@ -22,8 +36,9 @@ const ProductModal = ({ open, onClose, item, mode = "desc", onConfirm }) => {
       onClose={onClose}
       PaperProps={{
         style: {
-          backgroundColor: "rgb(31, 41, 55)",
-          color: "white",
+          backgroundColor:
+            theme === "dark" ? "rgb(31, 41, 55)" : "rgb(255, 255, 255)",
+          color: theme === "dark" ? "white" : "black",
           borderRadius: "16px",
           padding: "24px",
         },
@@ -32,7 +47,6 @@ const ProductModal = ({ open, onClose, item, mode = "desc", onConfirm }) => {
       <DialogTitle className="text-xl font-bold">
         {mode === "desc" ? "Descrição do Produto" : "Adicionar ao Carrinho"}
       </DialogTitle>
-      {/* IMAGEM PRODUTO */}
       <DialogContent dividers className="space-y-4">
         {item?.img && (
           <img
@@ -41,7 +55,6 @@ const ProductModal = ({ open, onClose, item, mode = "desc", onConfirm }) => {
             className="w-full h-48 object-cover rounded-lg mb-4"
           />
         )}
-        {/* DESCRIÇÃO OU ADICIONAR (ICONS) */}
         {mode === "desc" ? (
           <Typography className="text-gray-200">{item?.description}</Typography>
         ) : (
@@ -52,11 +65,10 @@ const ProductModal = ({ open, onClose, item, mode = "desc", onConfirm }) => {
             <Typography className="text-gray-400 pt-3">
               {item?.price}
             </Typography>
-            {/* LOGICA QUANTIDADE DE PRODUTO */}
             <div className="flex items-center justify-center gap-4 mt-6">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="cursor-pointer w-10 h-10 text-xl font-bold text-white bg-gray-900 border border-gray-500 rounded-full transition-all duration-400 ease-in-out hover:bg-gray-800 hover:border-gray-400 shadow-sm active:scale-100"
+                className={`cursor-pointer w-10 h-10 text-xl font-bold ${buttonClass} border ${borderClass} rounded-full transition-all duration-400 ease-in-out hover:bg-gray-800 hover:border-gray-400 shadow-sm active:scale-100`}
               >
                 -
               </button>
@@ -65,7 +77,7 @@ const ProductModal = ({ open, onClose, item, mode = "desc", onConfirm }) => {
 
               <button
                 onClick={() => setQuantity((q) => q + 1)}
-                className="cursor-pointer w-10 h-10 text-xl font-bold text-white bg-gray-900 border border-gray-500 rounded-full transition-all duration-400 ease-in-out hover:bg-gray-800 hover:border-gray-400 shadow-sm active:scale-95"
+                className={`cursor-pointer w-10 h-10 text-xl font-bold ${buttonClass} border ${borderClass} rounded-full transition-all duration-400 ease-in-out hover:bg-gray-800 hover:border-gray-400 shadow-sm active:scale-95`}
               >
                 +
               </button>
@@ -73,7 +85,6 @@ const ProductModal = ({ open, onClose, item, mode = "desc", onConfirm }) => {
           </>
         )}
       </DialogContent>
-      {/* BOTÃO ADICIONAR OU FECHAR */}
       <div className="flex items-center justify-center mt-5">
         {mode === "add" && (
           <button
