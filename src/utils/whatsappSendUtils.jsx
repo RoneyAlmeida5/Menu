@@ -9,11 +9,9 @@ export const sendWhatsAppOrder = ({
   deliveryIcon = "🛵",
   deliveryFee = 3.99,
   address = {
-    street: "Rua Clodomir Lucas dos Reis",
-    number: "38A",
+    address: "Rua Exemplo, Bairro, Cidade",
+    houseNumber: "",
     complement: "",
-    neighborhood: "Jacarepaguá",
-    city: "Rio de Janeiro",
   },
 }) => {
   if (!cartItems || cartItems.length === 0) return;
@@ -28,20 +26,20 @@ export const sendWhatsAppOrder = ({
     
   Itens:
   ${itemsMessage}
-  
+
   ${paymentMethodIcon} ${paymentMethodName}
-  
+
   ${deliveryIcon} Delivery (taxa de: R$ ${deliveryFee
     .toFixed(2)
     .replace(".", ",")})
-  🏠 ${address.street}, Nº ${address.number} - ${
-    address.complement ? address.complement + ", " : ""
-  }${address.neighborhood}, ${address.city}
-      
+  🏠 ${address.address}, Nº ${address.houseNumber}${
+    address.complement ? `, ${address.complement}` : ""
+  }
+
   📅 Data de entrega: ${formattedDate}
-  
+
   Total: R$ ${totalPrice.toFixed(2).replace(".", ",")}
-  
+
   Obrigado pela preferência, se precisar de algo é só chamar! 😉
   `;
 

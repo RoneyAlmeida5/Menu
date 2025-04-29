@@ -1,6 +1,12 @@
 import React, { useState, useRef } from "react";
+// CONTEXTS & COMPONENTS
 import { useCart } from "../../contexts/CartContext";
 import { sendWhatsAppOrder } from "../../utils/whatsappSendUtils";
+import PaymentMethodSelector from "./CartComponents/PaymentSelector";
+// MATERIAL UI & IMAGES
+import DateSelector from "./CartComponents/DateSelector";
+import AddressInput from "./CartComponents/AddressInput";
+import { BiLogoWhatsapp } from "react-icons/bi";
 import {
   Dialog,
   DialogTitle,
@@ -8,20 +14,24 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
-import { FiCalendar } from "react-icons/fi";
-import { BiLogoWhatsapp } from "react-icons/bi";
+import BannerCard from "../../assets/bannercard.jpeg";
 
 const CartModal = ({ open, onClose, theme }) => {
   const datepickerRef = useRef(null);
   const { cartItems, removeFromCart, totalQuantity } = useCart();
   const [deliveryDate, setDeliveryDate] = useState(dayjs());
+  const [selectedValue, setSelectedValue] = useState("Cartão");
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const textMutedClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
   const borderClass = theme === "dark" ? "border-gray-600" : "border-gray-300";
   const buttonTextClass = theme === "dark" ? "text-white" : "text-black";
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
 
   const totalPrice = cartItems.reduce((acc, item) => {
     const priceNumber = parseFloat(
@@ -31,10 +41,17 @@ const CartModal = ({ open, onClose, theme }) => {
   }, 0);
 
   const handleSendWhatsApp = () => {
+    if (!selectedAddress) {
+      alert("Por favor, selecione um endereço para entrega.");
+      return;
+    }
+
     sendWhatsAppOrder({
       cartItems,
       totalPrice,
       deliveryDate,
+      paymentMethodName: selectedValue,
+      address: selectedAddress,
     });
   };
 
@@ -47,8 +64,7 @@ const CartModal = ({ open, onClose, theme }) => {
           backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
           color: theme === "dark" ? "#ffffff" : "#000000",
           borderRadius: 6,
-          p: 3,
-          position: "relative",
+          p: 4,
         },
       }}
     >
@@ -65,45 +81,23 @@ const CartModal = ({ open, onClose, theme }) => {
 
       <DialogContent
         dividers
-        className={`space-y-4 max-h-[400px] overflow-y-auto ${borderClass}`}
+        className={`space-y-4 max-h-[600px] overflow-y-auto ${borderClass}`}
       >
-        <div className="flex flex-col mt-2 mb-4 relative">
-          <label
-            htmlFor="delivery-date"
-            className={`mb-1 text-sm font-medium ${
-              theme === "dark" ? "text-gray-300" : "text-gray-700"
-            }`}
-          >
-            Data da Entrega
-          </label>
-
-          <DatePicker
-            id="delivery-date"
-            ref={datepickerRef}
-            selected={deliveryDate.toDate()}
-            onChange={(date) => setDeliveryDate(dayjs(date))}
-            dateFormat="dd/MM/yyyy"
-            className={`w-full px-4 py-2 pl-3 rounded-md border outline-none focus:ring-2 focus:ring-gray-600 transition-colors
-          ${
-            theme === "dark"
-              ? "bg-gray-800 text-white border-gray-600"
-              : "bg-white text-black border-gray-300"
-          }
-          `}
-            calendarClassName={`rounded-lg shadow-lg mt-2 ${
-              theme === "dark"
-                ? "bg-gray-800 text-white"
-                : "bg-white text-black"
-            }`}
-            popperClassName="react-datepicker-popper"
-          />
-          <FiCalendar
-            onClick={() => datepickerRef.current.setOpen(true)}
-            className={`absolute cursor-pointer right-3 top-9 text-lg
-            ${theme === "dark" ? "text-white" : "text-gray-700"}`}
-          />
-        </div>
-
+        <DateSelector
+          theme={theme}
+          deliveryDate={deliveryDate}
+          setDeliveryDate={setDeliveryDate}
+          datepickerRef={datepickerRef}
+        />
+        <PaymentMethodSelector
+          selectedValue={selectedValue}
+          onChange={handleChange}
+          theme={theme}
+        />
+        <AddressInput
+          theme={theme}
+          onSelect={(place) => setSelectedAddress(place)}
+        />
         {cartItems.length === 0 ? (
           <Typography className={`${textMutedClass}`}>
             Carrinho vazio.
@@ -114,13 +108,14 @@ const CartModal = ({ open, onClose, theme }) => {
               key={item.id}
               className={`flex justify-between items-center border-b py-2 ${borderClass}`}
             >
-              <div className="mr-6">
-                <Typography className={`font-semibold ${buttonTextClass}`}>
+              <div className="flex flex-col mr-6">
+                <img src={BannerCard} className="w-25 h-10" />
+                <span className={`text-lg font-semibold ${buttonTextClass}`}>
                   {item.title}
-                </Typography>
-                <Typography className={`text-sm ${textMutedClass}`}>
+                </span>
+                <span className={`text-sm ${textMutedClass}`}>
                   Qtd: {item.quantity}
-                </Typography>
+                </span>
               </div>
               <Button
                 variant="outlined"
@@ -146,11 +141,11 @@ const CartModal = ({ open, onClose, theme }) => {
         <button
           onClick={handleSendWhatsApp}
           className={`cursor-pointer relative py-2 rounded-full min-w-[8.5rem] min-h-[2.92rem] group max-w-full flex items-center justify-start transition-all duration-[0.8s] ease-[cubic-bezier(0.510,0.026,0.368,1.016)] shadow-[inset_1px_2px_5px_#00000080]
-          ${
-            theme === "dark"
-              ? "bg-white/10 hover:bg-green-400"
-              : "bg-black/10 hover:bg-green-400"
-          }`}
+           ${
+             theme === "dark"
+               ? "bg-white/10 hover:bg-green-400"
+               : "bg-black/10 hover:bg-green-400"
+           }`}
         >
           <div className="absolute flex px-1 py-0.5 justify-start items-center inset-0">
             <div className="w-[0%] group-hover:w-full transition-all duration-[1s]"></div>
@@ -169,7 +164,7 @@ const CartModal = ({ open, onClose, theme }) => {
                     ? "text-black group-hover:text-white"
                     : "text-black group-hover:text-black"
                 } 
-                group-hover:-rotate-45 transition-all duration-[1s]`}
+                  group-hover:-rotate-45 transition-all duration-[1s]`}
               >
                 <BiLogoWhatsapp size={30} />
               </div>
@@ -177,12 +172,12 @@ const CartModal = ({ open, onClose, theme }) => {
           </div>
           <div
             className={`pl-[3.4rem] pr-[1.1rem] group-hover:pl-[1.1rem] group-hover:pr-[3.4rem] 
-            ${
-              theme === "dark"
-                ? "group-hover:text-black text-white"
-                : "group-hover:text-black text-black"
-            }
-            transition-all duration-[1s]`}
+              ${
+                theme === "dark"
+                  ? "group-hover:text-black text-white"
+                  : "group-hover:text-black text-black"
+              }
+                transition-all duration-[1s]`}
           >
             Finalizar
           </div>
