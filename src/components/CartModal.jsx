@@ -29,13 +29,43 @@ const CartModal = ({ open, onClose, theme }) => {
     const phone = "5521964895107";
     if (cartItems.length === 0) return;
 
-    const message = cartItems
-      .map((item) => `• ${item.title} (Qtd: ${item.quantity})`)
+    // --- Definindo informações fixas/manual ---
+    const orderNumber = 31; // você pode futuramente gerar automaticamente
+    const paymentMethodIcon = "💳";
+    const paymentMethodName = "Cartão";
+    const deliveryIcon = "🛵";
+    const deliveryFee = 3.99;
+    const address = {
+      street: "Rua Clodomir Lucas dos Reis",
+      number: "38A",
+      complement: "",
+      neighborhood: "Jacarepaguá",
+      city: "Rio de Janeiro",
+    };
+
+    // --- Montando a mensagem ---
+    const itemsMessage = cartItems
+      .map((item) => `➡ ${item.quantity}x ${item.title}`)
       .join("\n");
 
-    const finalMessage = `Olá! Gostaria de finalizar o pedido com os seguintes itens:\n\n${message}\n\nTotal de itens: ${totalQuantity}\nTotal a pagar: R$ ${totalPrice
+    const finalMessage = `Pedido nº ${orderNumber}
+  
+Itens:
+${itemsMessage}
+  
+${paymentMethodIcon} ${paymentMethodName}
+  
+${deliveryIcon} Delivery (taxa de: R$ ${deliveryFee
       .toFixed(2)
-      .replace(".", ",")}`;
+      .replace(".", ",")})
+🏠 ${address.street}, Nº ${address.number} - ${
+      address.complement ? address.complement + ", " : ""
+    }${address.neighborhood}, ${address.city}
+  
+Total: R$ ${totalPrice.toFixed(2).replace(".", ",")}
+  
+Obrigado pela preferência, se precisar de algo é só chamar! 😉
+  `;
 
     const encodedMessage = encodeURIComponent(finalMessage);
     const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
