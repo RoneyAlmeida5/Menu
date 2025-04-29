@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useCart } from "../../contexts/CartContext";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, Typography } from "@mui/material";
 
 const ProductModal = ({
   open,

@@ -67,15 +67,15 @@ function Home({ theme }) {
   return (
     <div
       className={`${
-        isSidebarOpen ? "ml-64" : "ml-20"
-      } mt-20 ${backgroundClass} mb-4 pt-6 rounded-2xl transition-all duration-300 h-[calc(100vh-6rem)]`}
+        isSidebarOpen ? "ml-64" : "ml-0 sm:ml-20"
+      } mt-20 ${backgroundClass} mb-4 pt-6 rounded-2xl transition-all duration-300 h-full min-h-screen`}
     >
-      <div className="h-full overflow-y-auto px-6 pb-6">
+      <div className="overflow-y-auto px-4 sm:px-6 pb-6">
         <BannerPromo />
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">
           {searchTerm ? `Pesquisa: ${searchTerm}` : selectedTitle}
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredItems.map((item) => (
             <CardProducts
               key={item.id}

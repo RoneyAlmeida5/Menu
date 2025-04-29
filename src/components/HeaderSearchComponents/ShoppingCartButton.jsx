@@ -7,7 +7,7 @@ const ShoppingCartButton = ({ onCartClick, theme }) => {
   const iconColor = theme === "dark" ? "text-white" : "text-black";
 
   return (
-    <div className="relative ml-4 overflow-visible">
+    <div className="relative overflow-visible">
       <button
         onClick={onCartClick}
         aria-label="Carrinho"

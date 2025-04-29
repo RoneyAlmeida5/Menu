@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import Logo from "../assets/Logo.png";
-import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
 import { FiLogIn } from "react-icons/fi";
 import { MdOutlineRestaurantMenu, MdNoDrinks } from "react-icons/md";
 import {
@@ -11,10 +10,14 @@ import {
 } from "react-icons/gi";
 import { BiSolidFoodMenu } from "react-icons/bi";
 import { useNavigation } from "../contexts/NavigationContext";
+import { HiMenu } from "react-icons/hi";
+import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
 
 function Header({ theme, setTheme }) {
   const headerRef = useRef(null);
   const [showText, setShowText] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedTitle } =
     useNavigation();
 
@@ -30,80 +33,146 @@ function Header({ theme, setTheme }) {
   ];
 
   useEffect(() => {
-    let timeout;
-    if (isSidebarOpen) {
-      timeout = setTimeout(() => setShowText(true), 145);
-    } else {
-      setShowText(false);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [isSidebarOpen]);
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
-    const headerElement = headerRef.current;
+    let t;
+    if (!isMobile && isSidebarOpen)
+      t = setTimeout(() => setShowText(true), 145);
+    else setShowText(false);
+    return () => clearTimeout(t);
+  }, [isSidebarOpen, isMobile]);
 
-    const handleMouseEnter = () => {
-      toggleSidebar(true);
-    };
-
-    const handleMouseLeave = () => {
-      toggleSidebar(false);
-    };
-
-    if (headerElement) {
-      headerElement.addEventListener("mouseenter", handleMouseEnter);
-      headerElement.addEventListener("mouseleave", handleMouseLeave);
-    }
-
+  useEffect(() => {
+    const el = headerRef.current;
+    if (isMobile || !el) return;
+    const enter = () => toggleSidebar(true);
+    const leave = () => toggleSidebar(false);
+    el.addEventListener("mouseenter", enter);
+    el.addEventListener("mouseleave", leave);
     return () => {
-      if (headerElement) {
-        headerElement.removeEventListener("mouseenter", handleMouseEnter);
-        headerElement.removeEventListener("mouseleave", handleMouseLeave);
-      }
+      el.removeEventListener("mouseenter", enter);
+      el.removeEventListener("mouseleave", leave);
     };
-  }, [toggleSidebar]);
+  }, [isMobile, toggleSidebar]);
 
-  const handleMenuItemClick = (itemName) => {
-    updateSelectedTitle(itemName);
+  const handleClick = (name) => {
+    updateSelectedTitle(name);
+    if (isMobile) setMobileMenuOpen(false);
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const baseClass =
+    theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black";
+
   return (
-    <header
-      ref={headerRef}
-      className={`fixed top-0 left-0 h-full z-10 p-4 transition-all duration-300 ${
-        isSidebarOpen ? "w-64" : "w-17"
-      } ${theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black"}`}
-    >
-      <div className="flex items-center justify-center mb-6 ml-4">
-        <ThemeToggle theme={theme} setTheme={setTheme} />
-      </div>
-      <div className="flex items-center justify-center mb-6">
-        <img src={Logo} className="w-40 h-40 object-contain" alt="Logo" />
-      </div>
-      <nav>
-        <ul className="flex flex-col gap-3">
-          {menuItems.map((item, idx) => (
-            <li
-              key={idx}
-              className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${
-                item.name === selectedTitle
-                  ? theme === "dark"
-                    ? "bg-gray-600 text-white"
-                    : "bg-gray-300 text-black"
-                  : theme === "dark"
-                  ? "text-gray-300 hover:bg-gray-700"
-                  : "text-gray-600 hover:bg-gray-200"
-              }`}
-              onClick={() => handleMenuItemClick(item.name)}
-            >
-              {item.icon}
-              {showText && <span>{item.name}</span>}
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </header>
+    <>
+      {/* --- MOBILE --- */}
+      <header
+        className={`
+          sm:hidden fixed bottom-0 left-0 z-20 w-full transition-all duration-300
+          flex items-center justify-between px-4
+          ${mobileMenuOpen ? "h-auto flex-col items-start gap-2 py-4" : "h-16"}
+          ${baseClass}
+        `}
+      >
+        <button
+          onClick={toggleMobileMenu}
+          className="text-2xl focus:outline-none"
+        >
+          <HiMenu />
+        </button>
+
+        <div className="flex items-center gap-4">
+          <img
+            src={Logo}
+            alt="Logo"
+            className="w-12 h-auto object-contain mr-20"
+          />
+          <ThemeToggle theme={theme} setTheme={setTheme} />
+        </div>
+
+        <nav className={`${!mobileMenuOpen && "hidden"} w-full`}>
+          <ul className="flex flex-col gap-2 items-start w-full mt-4">
+            {menuItems.map((item, i) => (
+              <li
+                key={i}
+                onClick={() => handleClick(item.name)}
+                className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 w-full
+                  ${
+                    item.name === selectedTitle
+                      ? theme === "dark"
+                        ? "bg-gray-600 text-white"
+                        : "bg-gray-300 text-black"
+                      : theme === "dark"
+                      ? "text-gray-300 hover:bg-gray-700"
+                      : "text-gray-600 hover:bg-gray-200"
+                  }
+                `}
+              >
+                {item.icon}
+                <span>{item.name}</span>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </header>
+
+      {/* --- DESKTOP --- */}
+      <header
+        ref={headerRef}
+        className={`
+          hidden sm:flex fixed z-20 top-0 left-0 h-full transition-all duration-400
+          ${isSidebarOpen ? "w-64" : "w-16"} p-2 flex-col items-center
+          ${baseClass}
+        `}
+      >
+        <div className="mb-6">
+          <img
+            src={Logo}
+            alt="Logo"
+            className="w-12 sm:w-32 h-auto object-contain"
+          />
+        </div>
+
+        <nav className="w-full flex-1 mt-1">
+          <ul className="flex flex-col gap-3">
+            {menuItems.map((item, i) => (
+              <li
+                key={i}
+                onClick={() => handleClick(item.name)}
+                className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200
+                  ${
+                    item.name === selectedTitle
+                      ? theme === "dark"
+                        ? "bg-gray-600 text-white"
+                        : "bg-gray-300 text-black"
+                      : theme === "dark"
+                      ? "text-gray-300 hover:bg-gray-700"
+                      : "text-gray-600 hover:bg-gray-200"
+                  }
+                `}
+              >
+                {item.icon}
+                {showText && <span>{item.name}</span>}
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Toggle de tema no rodapé da sidebar */}
+        <div className="flex mb-2 ml-3">
+          <ThemeToggle theme={theme} setTheme={setTheme} />
+        </div>
+      </header>
+    </>
   );
 }
 
