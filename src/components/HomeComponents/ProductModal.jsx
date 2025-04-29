@@ -72,7 +72,7 @@ const ProductModal = ({
                 -
               </button>
 
-              <p className="text-xl font-semibold text-white">{quantity}</p>
+              <p className={`${textModal} text-xl font-semibold`}>{quantity}</p>
 
               <button
                 onClick={() => setQuantity((q) => q + 1)}

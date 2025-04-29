@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { sendWhatsAppOrder } from "../../utils/whatsappSendUtils";
 import {
@@ -8,13 +8,14 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
+import { FiCalendar } from "react-icons/fi";
 import { BiLogoWhatsapp } from "react-icons/bi";
 
 const CartModal = ({ open, onClose, theme }) => {
+  const datepickerRef = useRef(null);
   const { cartItems, removeFromCart, totalQuantity } = useCart();
   const [deliveryDate, setDeliveryDate] = useState(dayjs());
 
@@ -66,21 +67,43 @@ const CartModal = ({ open, onClose, theme }) => {
         dividers
         className={`space-y-4 max-h-[400px] overflow-y-auto ${borderClass}`}
       >
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div className="flex flex-col mt-2 mb-4 relative">
+          <label
+            htmlFor="delivery-date"
+            className={`mb-1 text-sm font-medium ${
+              theme === "dark" ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            Data da Entrega
+          </label>
+
           <DatePicker
-            label="Data da Entrega"
-            value={deliveryDate}
-            onChange={(newValue) => setDeliveryDate(newValue)}
-            format="DD/MM/YYYY"
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                sx: { mt: 2 },
-                variant: "outlined",
-              },
-            }}
+            id="delivery-date"
+            ref={datepickerRef}
+            selected={deliveryDate.toDate()}
+            onChange={(date) => setDeliveryDate(dayjs(date))}
+            dateFormat="dd/MM/yyyy"
+            className={`w-full px-4 py-2 pl-3 rounded-md border outline-none focus:ring-2 focus:ring-gray-600 transition-colors
+          ${
+            theme === "dark"
+              ? "bg-gray-800 text-white border-gray-600"
+              : "bg-white text-black border-gray-300"
+          }
+          `}
+            calendarClassName={`rounded-lg shadow-lg mt-2 ${
+              theme === "dark"
+                ? "bg-gray-800 text-white"
+                : "bg-white text-black"
+            }`}
+            popperClassName="react-datepicker-popper"
           />
-        </LocalizationProvider>
+          <FiCalendar
+            onClick={() => datepickerRef.current.setOpen(true)}
+            className={`absolute cursor-pointer right-3 top-9 text-lg
+            ${theme === "dark" ? "text-white" : "text-gray-700"}`}
+          />
+        </div>
+
         {cartItems.length === 0 ? (
           <Typography className={`${textMutedClass}`}>
             Carrinho vazio.
