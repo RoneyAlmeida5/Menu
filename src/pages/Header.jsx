@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Logo from "../assets/Logo.png";
-import ThemeToggle from "../components/ThemeToggle";
+import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
 import { FiLogIn } from "react-icons/fi";
 import { MdOutlineRestaurantMenu, MdNoDrinks } from "react-icons/md";
 import {

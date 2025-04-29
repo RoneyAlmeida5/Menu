@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import ProductModal from "../components/ProductModal";
-import CardProducts from "../components/CardProducts";
-import BannerPromo from "../components/BannerPromo";
+import ProductModal from "../components/HomeComponents/ProductModal";
+import CardProducts from "../components/HomeComponents/CardProducts";
+import BannerPromo from "../components/HomeComponents/BannerPromo";
 import { useCart } from "../contexts/CartContext";
 import { useNavigation } from "../contexts/NavigationContext";
 import BannerCard from "../assets/bannercard.jpeg";

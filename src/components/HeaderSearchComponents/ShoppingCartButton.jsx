@@ -1,6 +1,6 @@
 import React from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useCart } from "../contexts/CartContext";
+import { useCart } from "../../contexts/CartContext";
 
 const ShoppingCartButton = ({ onCartClick, theme }) => {
   const { totalQuantity } = useCart();

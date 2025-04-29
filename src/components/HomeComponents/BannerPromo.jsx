@@ -1,5 +1,5 @@
 import React from "react";
-import Banner from "../assets/bannercard.jpg"; // Importe a imagem aqui
+import Banner from "../../assets/bannercard.jpg";
 
 const BannerPromo = () => {
   return (

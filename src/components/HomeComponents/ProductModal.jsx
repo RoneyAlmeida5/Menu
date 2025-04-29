@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useCart } from "../contexts/CartContext";
+import { useCart } from "../../contexts/CartContext";
 import {
   Dialog,
   DialogTitle,
@@ -23,7 +23,6 @@ const ProductModal = ({
     if (open) setQuantity(1);
   }, [open]);
 
-  // Determina as classes de fundo e texto com base no tema
   const buttonClass =
     theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-700 text-gray-100";
   const borderClass = theme === "dark" ? "border-gray-500" : "border-gray-300";

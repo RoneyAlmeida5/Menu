@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { useCart } from "../../contexts/CartContext";
+import { sendWhatsAppOrder } from "../../utils/whatsappSendUtils";
 import {
   Dialog,
   DialogTitle,
@@ -6,14 +8,16 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import { BiLogoWhatsapp } from "react-icons/bi";
-import { useCart } from "../contexts/CartContext";
 
 const CartModal = ({ open, onClose, theme }) => {
   const { cartItems, removeFromCart, totalQuantity } = useCart();
+  const [deliveryDate, setDeliveryDate] = useState(dayjs());
 
-  const backgroundClass =
-    theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";
   const textMutedClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
   const borderClass = theme === "dark" ? "border-gray-600" : "border-gray-300";
   const buttonTextClass = theme === "dark" ? "text-white" : "text-black";
@@ -26,51 +30,11 @@ const CartModal = ({ open, onClose, theme }) => {
   }, 0);
 
   const handleSendWhatsApp = () => {
-    const phone = "5521964895107";
-    if (cartItems.length === 0) return;
-
-    // --- Definindo informações fixas/manual ---
-    const orderNumber = 31; // você pode futuramente gerar automaticamente
-    const paymentMethodIcon = "💳";
-    const paymentMethodName = "Cartão";
-    const deliveryIcon = "🛵";
-    const deliveryFee = 3.99;
-    const address = {
-      street: "Rua Clodomir Lucas dos Reis",
-      number: "38A",
-      complement: "",
-      neighborhood: "Jacarepaguá",
-      city: "Rio de Janeiro",
-    };
-
-    // --- Montando a mensagem ---
-    const itemsMessage = cartItems
-      .map((item) => `➡ ${item.quantity}x ${item.title}`)
-      .join("\n");
-
-    const finalMessage = `Pedido nº ${orderNumber}
-  
-Itens:
-${itemsMessage}
-  
-${paymentMethodIcon} ${paymentMethodName}
-  
-${deliveryIcon} Delivery (taxa de: R$ ${deliveryFee
-      .toFixed(2)
-      .replace(".", ",")})
-🏠 ${address.street}, Nº ${address.number} - ${
-      address.complement ? address.complement + ", " : ""
-    }${address.neighborhood}, ${address.city}
-  
-Total: R$ ${totalPrice.toFixed(2).replace(".", ",")}
-  
-Obrigado pela preferência, se precisar de algo é só chamar! 😉
-  `;
-
-    const encodedMessage = encodeURIComponent(finalMessage);
-    const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
-
-    window.open(url, "_blank");
+    sendWhatsAppOrder({
+      cartItems,
+      totalPrice,
+      deliveryDate,
+    });
   };
 
   return (
@@ -102,6 +66,21 @@ Obrigado pela preferência, se precisar de algo é só chamar! 😉
         dividers
         className={`space-y-4 max-h-[400px] overflow-y-auto ${borderClass}`}
       >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Data da Entrega"
+            value={deliveryDate}
+            onChange={(newValue) => setDeliveryDate(newValue)}
+            format="DD/MM/YYYY"
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                sx: { mt: 2 },
+                variant: "outlined",
+              },
+            }}
+          />
+        </LocalizationProvider>
         {cartItems.length === 0 ? (
           <Typography className={`${textMutedClass}`}>
             Carrinho vazio.

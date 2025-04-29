@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 // COMPONENTS & CONTEXT
-import CartModal from "../components/CartModal";
-import ShoppingCartButton from "../components/ShoppingCartButton";
-import SearchBar from "../components/SearchBar";
+import CartModal from "../components/HeaderSearchComponents/CartModal";
+import ShoppingCartButton from "../components/HeaderSearchComponents/ShoppingCartButton";
+import SearchBar from "../components/HeaderSearchComponents/SearchBar";
 import { useNavigation } from "../contexts/NavigationContext";
 
 const HeaderSearch = ({ theme }) => {
