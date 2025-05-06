@@ -68,7 +68,7 @@ function Home({ theme }) {
     <div
       className={`${
         isSidebarOpen ? "ml-64" : "ml-0 sm:ml-20"
-      } mt-20 ${backgroundClass} mb-4 pt-6 rounded-2xl transition-all duration-300 h-full min-h-screen`}
+      } mt-20 ${backgroundClass} mb-9 pt-6 rounded-2xl transition-all duration-300 h-full min-h-screen`}
     >
       <div className="overflow-y-auto px-4 sm:px-6 pb-6">
         <BannerPromo />
