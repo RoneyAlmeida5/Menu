@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 
-const AddressInput = ({ onSelect, theme }) => {
+const AddressInput = ({ onSelect, theme, initialAddress }) => {
   const [inputValue, setInputValue] = useState("");
   const [houseNumber, setHouseNumber] = useState("");
   const [complement, setComplement] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
+
+  // Preencher campos iniciais com dados recebidos
+  useEffect(() => {
+    if (initialAddress) {
+      setInputValue(initialAddress.address || initialAddress.formatted || "");
+      setHouseNumber(initialAddress.houseNumber || "");
+      setComplement(initialAddress.complement || "");
+    }
+  }, [initialAddress]);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -59,6 +68,7 @@ const AddressInput = ({ onSelect, theme }) => {
     onSelect({ ...place, formatted });
   };
 
+  // Sempre que número ou complemento mudarem, atualizar endereço completo
   useEffect(() => {
     if (inputValue) {
       onSelect({
@@ -70,7 +80,7 @@ const AddressInput = ({ onSelect, theme }) => {
         }`,
       });
     }
-  }, [houseNumber, complement]);
+  }, [houseNumber, complement, inputValue]);
 
   const borderClass = theme === "dark" ? "border-gray-600" : "border-gray-300";
   const bgClass =

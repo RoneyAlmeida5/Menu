@@ -20,6 +20,7 @@
     "aos": "^2.3.4",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.501.0",
     "react": "^19.0.0",
     "react-datepicker": "^8.3.0",

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // CONTEXTS & COMPONENTS
 import { useCart } from "../../contexts/CartContext";
 import { sendWhatsAppOrder } from "../../utils/whatsappSendUtils";
@@ -55,6 +55,25 @@ const CartModal = ({ open, onClose, theme }) => {
     });
   };
 
+  // Recupera endereço salvo no localStorage ao abrir o modal
+  useEffect(() => {
+    const savedAddress = localStorage.getItem("deliveryAddress");
+    if (savedAddress) {
+      try {
+        setSelectedAddress(JSON.parse(savedAddress));
+      } catch (error) {
+        console.error("Erro ao carregar endereço do localStorage:", error);
+      }
+    }
+  }, []);
+
+  // Salva o endereço no localStorage sempre que ele for alterado
+  useEffect(() => {
+    if (selectedAddress) {
+      localStorage.setItem("deliveryAddress", JSON.stringify(selectedAddress));
+    }
+  }, [selectedAddress]);
+
   return (
     <Dialog
       open={open}
@@ -97,6 +116,7 @@ const CartModal = ({ open, onClose, theme }) => {
         <AddressInput
           theme={theme}
           onSelect={(place) => setSelectedAddress(place)}
+          initialAddress={selectedAddress}
         />
         {cartItems.length === 0 ? (
           <Typography className={`${textMutedClass}`}>
