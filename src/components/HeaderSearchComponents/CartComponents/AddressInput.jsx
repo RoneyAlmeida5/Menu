@@ -7,7 +7,6 @@ const AddressInput = ({ onSelect, theme, initialAddress }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
 
-  // Preencher campos iniciais com dados recebidos
   useEffect(() => {
     if (initialAddress) {
       setInputValue(initialAddress.address || initialAddress.formatted || "");
@@ -68,7 +67,6 @@ const AddressInput = ({ onSelect, theme, initialAddress }) => {
     onSelect({ ...place, formatted });
   };
 
-  // Sempre que número ou complemento mudarem, atualizar endereço completo
   useEffect(() => {
     if (inputValue) {
       onSelect({

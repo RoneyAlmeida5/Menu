@@ -25,17 +25,21 @@ const ProductModal = ({
     <Dialog
       open={open}
       onClose={onClose}
+      fullWidth
+      maxWidth="xs"
+      scroll="body"
       PaperProps={{
         style: {
           backgroundColor:
             theme === "dark" ? "rgb(31, 41, 55)" : "rgb(255, 255, 255)",
           color: theme === "dark" ? "white" : "black",
           borderRadius: "16px",
-          padding: "24px",
+          padding: "16px",
+          margin: "16px",
         },
       }}
     >
-      <DialogTitle className="text-xl font-bold">
+      <DialogTitle className="text-xl font-bold text-center">
         {mode === "desc" ? "Descrição do Produto" : "Adicionar ao Carrinho"}
       </DialogTitle>
       <DialogContent dividers className="space-y-4">
@@ -43,7 +47,7 @@ const ProductModal = ({
           <img
             src={item.img}
             alt={item.title}
-            className="w-full h-48 object-cover rounded-lg mb-4"
+            className="w-full h-auto max-h-48 object-cover rounded-lg mb-4"
           />
         )}
         {mode === "desc" ? (
@@ -53,22 +57,22 @@ const ProductModal = ({
             <Typography className={textModal}>
               Deseja adicionar <strong>{item?.title}</strong> ao carrinho?
             </Typography>
-            <Typography className={`${textValue} text-gray-400 pt-3`}>
+            <Typography
+              className={`${textValue} text-center pt-3 text-lg font-semibold`}
+            >
               {item?.price}
             </Typography>
             <div className="flex items-center justify-center gap-4 mt-6">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className={`cursor-pointer w-10 h-10 text-xl font-bold ${buttonClass} border ${borderClass} rounded-full transition-all duration-400 ease-in-out hover:bg-gray-800 hover:border-gray-400 shadow-sm active:scale-100`}
+                className={`cursor-pointer w-10 h-10 text-xl font-bold ${buttonClass} border ${borderClass} rounded-full hover:scale-95 transition`}
               >
                 -
               </button>
-
               <p className={`${textModal} text-xl font-semibold`}>{quantity}</p>
-
               <button
                 onClick={() => setQuantity((q) => q + 1)}
-                className={`cursor-pointer w-10 h-10 text-xl font-bold ${buttonClass} border ${borderClass} rounded-full transition-all duration-400 ease-in-out hover:bg-gray-800 hover:border-gray-400 shadow-sm active:scale-95`}
+                className={`cursor-pointer w-10 h-10 text-xl font-bold ${buttonClass} border ${borderClass} rounded-full hover:scale-95 transition`}
               >
                 +
               </button>

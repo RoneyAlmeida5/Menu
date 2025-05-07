@@ -55,7 +55,6 @@ const CartModal = ({ open, onClose, theme }) => {
     });
   };
 
-  // Recupera endereço salvo no localStorage ao abrir o modal
   useEffect(() => {
     const savedAddress = localStorage.getItem("deliveryAddress");
     if (savedAddress) {
@@ -67,7 +66,6 @@ const CartModal = ({ open, onClose, theme }) => {
     }
   }, []);
 
-  // Salva o endereço no localStorage sempre que ele for alterado
   useEffect(() => {
     if (selectedAddress) {
       localStorage.setItem("deliveryAddress", JSON.stringify(selectedAddress));
