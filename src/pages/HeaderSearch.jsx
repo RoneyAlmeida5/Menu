@@ -12,7 +12,6 @@ const HeaderSearch = ({ theme }) => {
   const backgroundClass =
     theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black";
 
-  // mesmo deslocamento da sidebar
   const leftOffset =
     typeof window !== "undefined" && window.innerWidth >= 640
       ? isSidebarOpen

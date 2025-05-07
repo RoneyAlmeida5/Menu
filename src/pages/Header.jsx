@@ -88,27 +88,20 @@ function Header({ theme, setTheme }) {
           ${baseClass}
         `}
       >
-        {/* Botão do Menu (à esquerda quando o menu está fechado) */}
         <button
           onClick={toggleMobileMenu}
           className="absolute left-4 text-2xl focus:outline-none"
         >
           {mobileMenuOpen ? <IoClose className="h-7 w-7 mb-105" /> : <HiMenu />}
         </button>
-
-        {/* Logo Centralizada */}
         <div className="flex items-center justify-center">
           <img src={Logo} alt="Logo" className="w-15 mr-2 object-contain" />
         </div>
-
-        {/* ThemeToggle (à direita quando o menu está fechado) */}
         {!mobileMenuOpen && (
           <div className="absolute right-3">
             <ThemeToggle theme={theme} setTheme={setTheme} />
           </div>
         )}
-
-        {/* Navegação (aparece quando mobileMenuOpen é true) */}
         <nav className={`${!mobileMenuOpen && "hidden"} w-full mt-4`}>
           <ul className="flex flex-col gap-2 items-start w-full">
             {menuItems.map((item, i) => (
