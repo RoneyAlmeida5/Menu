@@ -175,5 +175,14 @@ function Header({ theme, setTheme }) {
     </>
   );
 }
+export const categories = [
+  "Bolos",
+  "Hamburger",
+  "Acompanhamentos",
+  "Entradas",
+  "Batatas",
+  "Frangos",
+  "Bebidas",
+];
 
 export default Header;

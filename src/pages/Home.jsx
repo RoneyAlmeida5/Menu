@@ -4,7 +4,7 @@ import CardProducts from "../components/HomeComponents/CardProducts";
 import BannerPromo from "../components/HomeComponents/BannerPromo";
 import { useCart } from "../contexts/CartContext";
 import { useNavigation } from "../contexts/NavigationContext";
-import BannerCard from "../assets/bannercard.jpeg";
+import { useProducts } from "../contexts/ProductsContext";
 
 function Home({ theme }) {
   const [open, setOpen] = useState(false);
@@ -14,36 +14,8 @@ function Home({ theme }) {
   const { addToCart } = useCart();
   const { isSidebarOpen, selectedTitle, searchTerm } = useNavigation();
 
-  const initialItems = [
-    {
-      id: 1,
-      title: "Bolo de Chocolate com Morango",
-      price: "R$ 49,90",
-      img: BannerCard,
-      description:
-        "Delicioso bolo de chocolate com morango fresco e cobertura cremosa.",
-      category: "Bolos",
-    },
-    {
-      id: 7,
-      title: "Hambúrguer Clássico",
-      price: "R$ 29,90",
-      img: "https://blog.biglar.com.br/wp-content/uploads/2024/08/iStock-1398630614.jpg",
-      description:
-        "Um delicioso hambúrguer com carne suculenta, queijo, alface e tomate.",
-      category: "Hamburger",
-    },
-    {
-      id: 8,
-      title: "Sorvete Napolitano",
-      price: "R$ 19,90",
-      img: "https://blog.gsuplementos.com.br/wp-content/uploads/2020/11/iStock-1173381958.jpg",
-      description: "Sorvete bem gelado e com 3 cores",
-      category: "Bebidas",
-    },
-  ];
-
-  const filteredItems = initialItems.filter((item) => {
+  const { products } = useProducts();
+  const filteredItems = products.filter((item) => {
     const matchesSearch = item.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -58,7 +30,6 @@ function Home({ theme }) {
     setQuantity(1);
     setOpen(true);
   };
-
   const handleClose = () => setOpen(false);
 
   const backgroundClass =
