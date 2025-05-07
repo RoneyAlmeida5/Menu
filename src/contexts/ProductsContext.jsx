@@ -7,7 +7,7 @@ const initialProducts = [
   {
     id: 1,
     title: "Bolo de Chocolate com Morango",
-    price: "R$ 49,90",
+    price: "49,90",
     img: BannerCard,
     description:
       "Delicioso bolo de chocolate com morango fresco e cobertura cremosa.",
@@ -16,7 +16,7 @@ const initialProducts = [
   {
     id: 7,
     title: "Hambúrguer Clássico",
-    price: "R$ 29,90",
+    price: "29,90",
     img: "https://blog.biglar.com.br/wp-content/uploads/2024/08/iStock-1398630614.jpg",
     description:
       "Um delicioso hambúrguer com carne suculenta, queijo, alface e tomate.",
@@ -25,7 +25,7 @@ const initialProducts = [
   {
     id: 8,
     title: "Sorvete Napolitano",
-    price: "R$ 19,90",
+    price: "19,90",
     img: "https://blog.gsuplementos.com.br/wp-content/uploads/2020/11/iStock-1173381958.jpg",
     description: "Sorvete bem gelado e com 3 cores",
     category: "Bebidas",

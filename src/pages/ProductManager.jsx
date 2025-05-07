@@ -62,7 +62,6 @@ const ProductManager = ({ theme, setTheme }) => {
     deleteProduct(product.id);
   };
 
-  const borderColor = theme === "dark" ? "border-gray-600" : "border-gray-300";
   const backgroundClass =
     theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-300 text-black";
 
@@ -73,7 +72,9 @@ const ProductManager = ({ theme, setTheme }) => {
       } mt-21 ${backgroundClass} mb-9 pt-6 rounded-2xl transition-all duration-300 h-full min-h-screen`}
     >
       <div className="overflow-y-auto px-4 sm:px-6 pb-6">
-        <h3 className="text-xl font-semibold mb-2">Banner de Promoção</h3>
+        <h4 className="text-3xl font-bold text-center mb-6 animate-pulse text-gray-100">
+          GESTÃO DOS PRODUTOS
+        </h4>
         <BannerPromo />
 
         <div className="flex items-center justify-center">

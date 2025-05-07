@@ -18,7 +18,7 @@ const CardProducts = ({ item, handleOpen, theme }) => {
         className="w-full h-32 object-cover rounded-md mb-2"
       />
       <h3 className="text-lg font-semibold">{item.title}</h3>
-      <p className={`${priceColorClass}`}>{item.price}</p>
+      <p className={`${priceColorClass}`}>R$ {item.price}</p>
       <div className="mt-4 flex justify-end space-x-2">
         <Tooltip title="Descrição" arrow>
           <IconButton onClick={() => handleOpen(item, "desc")} color="inherit">

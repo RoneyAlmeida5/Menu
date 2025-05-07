@@ -60,7 +60,7 @@ const ProductModal = ({
             <Typography
               className={`${textValue} text-center pt-3 text-lg font-semibold`}
             >
-              {item?.price}
+              R$ {item?.price}
             </Typography>
             <div className="flex items-center justify-center gap-4 mt-6">
               <button
