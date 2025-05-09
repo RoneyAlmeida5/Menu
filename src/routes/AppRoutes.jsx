@@ -34,11 +34,7 @@ const AppRoutes = () => {
       <Routes>
         <Route
           path="/management"
-          element={
-            <Layout theme={theme} setTheme={setTheme}>
-              <ProductManager theme={theme} setTheme={setTheme} />
-            </Layout>
-          }
+          element={<ProductManager theme={theme} setTheme={setTheme} />}
         />
         <Route
           path="/"
