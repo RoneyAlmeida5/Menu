@@ -1,17 +1,16 @@
+// IMPORTAÇÕES
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 // PAGES
 import Header from "../pages/Header";
 import HeaderSearch from "../pages/HeaderSearch";
 import Home from "../pages/Home";
 import ProductManager from "../pages/ProductManager";
+import Login from "../pages/Login";
 
-// ROUTES
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import { useEffect, useState } from "react";
+// COMPONENTE DE ROTA PROTEGIDA
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const Layout = ({ children, theme, setTheme }) => (
   <>
@@ -32,12 +31,17 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route
           path="/management"
-          element={<ProductManager theme={theme} setTheme={setTheme} />}
+          element={
+            <ProtectedRoute>
+              <ProductManager theme={theme} setTheme={setTheme} />
+            </ProtectedRoute>
+          }
         />
         <Route
-          path="/"
+          path="/consumers"
           element={
             <Layout theme={theme} setTheme={setTheme}>
               <Home theme={theme} setTheme={setTheme} />
