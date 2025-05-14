@@ -1,13 +1,20 @@
+import React from "react";
 import { Navigate } from "react-router-dom";
-
-const isAuthenticated = () => {
-  const token = localStorage.getItem("token");
-  return !!token;
-};
+import { useUser } from "../contexts/UserContext";
 
 const ProtectedRoute = ({ children }) => {
-  if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+  const { user, token } = useUser();
+
+  if (user === null && token === null) {
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-600 dark:text-white">
+        Carregando...
+      </div>
+    );
+  }
+
+  if (!user || !token) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

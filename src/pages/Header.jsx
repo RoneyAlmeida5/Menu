@@ -1,14 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Logo from "../assets/Logo.png";
-import { FiLogIn } from "react-icons/fi";
-import { MdOutlineRestaurantMenu, MdNoDrinks } from "react-icons/md";
-import {
-  GiCakeSlice,
-  GiHamburger,
-  GiPotato,
-  GiChickenOven,
-} from "react-icons/gi";
-import { BiSolidFoodMenu } from "react-icons/bi";
+import FiberSmartRecordIcon from "@mui/icons-material/FiberSmartRecord";
 import { useNavigation } from "../contexts/NavigationContext";
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
@@ -23,14 +15,17 @@ function Header({ theme, setTheme }) {
     useNavigation();
 
   const menuItems = [
-    { name: "Menu Completo", icon: <BiSolidFoodMenu /> },
-    { name: "Bolos", icon: <GiCakeSlice /> },
-    { name: "Hamburger", icon: <GiHamburger /> },
-    { name: "Acompanhamentos", icon: <MdOutlineRestaurantMenu /> },
-    { name: "Entradas", icon: <FiLogIn /> },
-    { name: "Batatas", icon: <GiPotato /> },
-    { name: "Frangos", icon: <GiChickenOven /> },
-    { name: "Bebidas", icon: <MdNoDrinks /> },
+    { name: "Menu Completo", icon: <FiberSmartRecordIcon fontSize="small" /> },
+    { name: "Bolos", icon: <FiberSmartRecordIcon fontSize="small" /> },
+    { name: "Hamburger", icon: <FiberSmartRecordIcon fontSize="small" /> },
+    {
+      name: "Acompanhamentos",
+      icon: <FiberSmartRecordIcon fontSize="small" />,
+    },
+    { name: "Entradas", icon: <FiberSmartRecordIcon fontSize="small" /> },
+    { name: "Batatas", icon: <FiberSmartRecordIcon fontSize="small" /> },
+    { name: "Frangos", icon: <FiberSmartRecordIcon fontSize="small" /> },
+    { name: "Bebidas", icon: <FiberSmartRecordIcon fontSize="small" /> },
   ];
 
   useEffect(() => {
@@ -133,7 +128,7 @@ function Header({ theme, setTheme }) {
         ref={headerRef}
         className={`
           hidden sm:flex fixed z-20 top-0 left-0 h-full transition-all duration-400
-          ${isSidebarOpen ? "w-64" : "w-16"} p-2 flex-col items-center
+          ${isSidebarOpen ? "w-64" : "w-17"} p-2 flex-col items-center
           ${baseClass}
         `}
       >
