@@ -5,28 +5,49 @@ import { useNavigation } from "../contexts/NavigationContext";
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
+import axios from "axios";
 
 function Header({ theme, setTheme }) {
   const headerRef = useRef(null);
   const [showText, setShowText] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuItems, setMenuItems] = useState([]);
   const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedTitle } =
     useNavigation();
 
-  const menuItems = [
-    { name: "Menu Completo", icon: <FiberSmartRecordIcon fontSize="small" /> },
-    { name: "Bolos", icon: <FiberSmartRecordIcon fontSize="small" /> },
-    { name: "Hamburger", icon: <FiberSmartRecordIcon fontSize="small" /> },
-    {
-      name: "Acompanhamentos",
-      icon: <FiberSmartRecordIcon fontSize="small" />,
-    },
-    { name: "Entradas", icon: <FiberSmartRecordIcon fontSize="small" /> },
-    { name: "Batatas", icon: <FiberSmartRecordIcon fontSize="small" /> },
-    { name: "Frangos", icon: <FiberSmartRecordIcon fontSize="small" /> },
-    { name: "Bebidas", icon: <FiberSmartRecordIcon fontSize="small" /> },
-  ];
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/menu", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const fetchedMenus = response.data || [];
+
+        // Adiciona ícone em cada menu
+        const menusWithIcons = [
+          {
+            name: "Menu Completo",
+            icon: <FiberSmartRecordIcon fontSize="small" />,
+          },
+          ...fetchedMenus.map((menu) => ({
+            name: menu.name,
+            icon: <FiberSmartRecordIcon fontSize="small" />,
+          })),
+        ];
+
+        setMenuItems(menusWithIcons);
+      } catch (error) {
+        console.error("Erro ao buscar menus:", error);
+      }
+    };
+
+    fetchMenus();
+  }, []);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 640);

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "@mui/material";
-import { categories } from "../../pages/Header";
 import { FiImage } from "react-icons/fi";
+import axios from "axios";
+import { useUser } from "../../contexts/UserContext";
 
 const ProductFormModal = ({
   form,
@@ -12,8 +13,25 @@ const ProductFormModal = ({
   setOpen,
   theme,
 }) => {
+  const { user } = useUser();
+  const [categories, setCategories] = useState([]);
   const isDark = theme === "dark";
   const baseClass = isDark ? "bg-gray-800 text-white" : "bg-white text-black";
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (user?.companyId) {
+        try {
+          const response = await axios.get(`/menu/${user.companyId}`);
+          setCategories(response.data);
+        } catch (error) {
+          console.error("Erro ao buscar categorias:", error);
+        }
+      }
+    };
+
+    fetchCategories();
+  }, [user]);
 
   const handleClose = () => setOpen(false);
 
@@ -104,9 +122,10 @@ const ProductFormModal = ({
                     : "border-gray-300"
                 } focus:outline-none focus:ring focus:border-blue-500`}
               >
-                {categories.map((category, index) => (
-                  <option key={index} value={category}>
-                    {category}
+                <option value="">Selecione uma categoria</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
                   </option>
                 ))}
               </select>

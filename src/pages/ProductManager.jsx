@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import Header from "./Header";
 import Logo from "../assets/Logo.png";
 import SearchBar from "../components/HeaderSearchComponents/SearchBar";
 
 // IMPORTS
+import { useUser } from "../contexts/UserContext";
+import axios from "axios";
 import { useProducts } from "../contexts/ProductsContext";
 import { useNavigation } from "../contexts/NavigationContext";
 import BannerPromo from "../components/HomeComponents/BannerPromo";
@@ -16,7 +18,24 @@ const ProductManager = ({ theme, setTheme }) => {
   const { isSidebarOpen, selectedTitle, searchTerm, updateSearchTerm } =
     useNavigation();
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const { user } = useUser();
   const handleSearch = (term) => updateSearchTerm(term);
+
+  const fetchCategories = async () => {
+    if (user?.companyId) {
+      try {
+        const response = await axios.get(`/menu/${user.companyId}`);
+        setCategories(response.data.map((menu) => menu.name));
+      } catch (error) {
+        console.error("Erro ao buscar categorias:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, [user]);
 
   const [form, setForm] = useState({
     id: null,
@@ -131,6 +150,7 @@ const ProductManager = ({ theme, setTheme }) => {
         </h2>
 
         <ProductFormModal
+          categories={categories}
           form={form}
           setForm={setForm}
           handleChange={handleChange}
