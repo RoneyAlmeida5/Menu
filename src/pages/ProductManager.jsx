@@ -5,7 +5,6 @@ import Logo from "../assets/Logo.png";
 import SearchBar from "../components/HeaderSearchComponents/SearchBar";
 
 // IMPORTS
-import { useUser } from "../contexts/UserContext";
 import axios from "axios";
 import { useProducts } from "../contexts/ProductsContext";
 import { useNavigation } from "../contexts/NavigationContext";
@@ -14,28 +13,55 @@ import CardProductsManager from "../components/ProductManager/CardProductsManage
 import ProductFormModal from "../components/ProductManager/ProductFormModal";
 
 const ProductManager = ({ theme, setTheme }) => {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const [open, setOpen] = useState(false);
+  const [company, setCompany] = useState();
+  const { products, setProducts, addProduct, updateProduct, deleteProduct } =
+    useProducts();
   const { isSidebarOpen, selectedTitle, searchTerm, updateSearchTerm } =
     useNavigation();
-  const [open, setOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const { user } = useUser();
   const handleSearch = (term) => updateSearchTerm(term);
 
-  const fetchCategories = async () => {
-    if (user?.companyId) {
-      try {
-        const response = await axios.get(`/menu/${user.companyId}`);
-        setCategories(response.data.map((menu) => menu.name));
-      } catch (error) {
-        console.error("Erro ao buscar categorias:", error);
-      }
-    }
-  };
-
+  // EFFECT PARA REQ DA IMAGE
   useEffect(() => {
-    fetchCategories();
-  }, [user]);
+    const fetchCompany = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/companies/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCompany(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados da empresa:", error);
+      }
+    };
+
+    fetchCompany();
+  }, []);
+
+  // EFFECT PARA REQ DE PRODUTOS
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:3000/product", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            menuId:
+              selectedTitle !== "Menu Completo" ? selectedTitle : undefined,
+          },
+        });
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Erro ao buscar produtos:", err);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedTitle]);
 
   const [form, setForm] = useState({
     id: null,
@@ -47,11 +73,16 @@ const ProductManager = ({ theme, setTheme }) => {
   });
 
   const filteredItems = products.filter((item) => {
-    const matchesSearch = item.title
+    const title = item?.title || "";
+    const category = item?.category || "";
+
+    const matchesSearch = title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
+
     const matchesCategory =
-      selectedTitle === "Menu Completo" || item.category === selectedTitle;
+      selectedTitle === "Menu Completo" || category === selectedTitle;
+
     return matchesSearch && matchesCategory;
   });
 
@@ -99,7 +130,7 @@ const ProductManager = ({ theme, setTheme }) => {
     >
       <div className="flex items-center justify-center">
         <img
-          src={Logo}
+          src={company?.image ? `http://localhost:3000${company.image}` : Logo}
           alt="Logo"
           className="w-12 sm:w-16 h-auto object-contain"
         />
@@ -150,7 +181,6 @@ const ProductManager = ({ theme, setTheme }) => {
         </h2>
 
         <ProductFormModal
-          categories={categories}
           form={form}
           setForm={setForm}
           handleChange={handleChange}

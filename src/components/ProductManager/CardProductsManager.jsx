@@ -13,13 +13,13 @@ const CardProductsManager = ({ item, onEdit, onDelete, theme }) => {
       className={`${backgroundClass} w-full h-full p-4 rounded-lg shadow-md hover:scale-105 transition-transform`}
     >
       <img
-        src={item.img}
-        alt={item.title}
+        src={`http://localhost:3000${item.image}`}
+        alt={item.name}
         className="w-full h-32 object-cover rounded-md mb-2"
       />
-      <h3 className="text-lg font-semibold">{item.title}</h3>
+      <h3 className="text-lg font-semibold">{item.name}</h3>
       <p className="text-sm mt-1">{item.description}</p>{" "}
-      <p className={`${priceColorClass} mt-2`}>R$ {item.price}</p>
+      <p className={`${priceColorClass} mt-2`}>R$ {item.value}</p>
       <div className="mt-4 flex justify-end space-x-2">
         <Tooltip title="Editar" arrow>
           <IconButton onClick={() => onEdit(item)} color="inherit">

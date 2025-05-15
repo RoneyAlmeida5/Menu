@@ -12,10 +12,31 @@ function Header({ theme, setTheme }) {
   const [showText, setShowText] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [menuItems, setMenuItems] = useState([]);
   const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedTitle } =
     useNavigation();
+  const [menuItems, setMenuItems] = useState([]);
+  const [company, setCompany] = useState(null);
 
+  // EFFECT PARA REQ IMG COMPANY
+  useEffect(() => {
+    const fetchCompany = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/companies/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCompany(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados da empresa:", error);
+      }
+    };
+
+    fetchCompany();
+  }, []);
+
+  // EFFECT PARA REQ DE MENU
   useEffect(() => {
     const fetchMenus = async () => {
       try {
@@ -28,7 +49,6 @@ function Header({ theme, setTheme }) {
 
         const fetchedMenus = response.data || [];
 
-        // Adiciona ícone em cada menu
         const menusWithIcons = [
           {
             name: "Menu Completo",
@@ -49,6 +69,7 @@ function Header({ theme, setTheme }) {
     fetchMenus();
   }, []);
 
+  // EFFECT PARA MOBILE & WEB
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 640);
     onResize();
@@ -111,7 +132,13 @@ function Header({ theme, setTheme }) {
           {mobileMenuOpen ? <IoClose className="h-7 w-7 mb-105" /> : <HiMenu />}
         </button>
         <div className="flex items-center justify-center">
-          <img src={Logo} alt="Logo" className="w-15 mr-2 object-contain" />
+          <img
+            src={
+              company?.image ? `http://localhost:3000${company.image}` : Logo
+            }
+            alt="Logo"
+            className="w-15 mr-2 object-contain"
+          />
         </div>
         {!mobileMenuOpen && (
           <div className="absolute right-3">
@@ -155,7 +182,9 @@ function Header({ theme, setTheme }) {
       >
         <div className="mb-6">
           <img
-            src={Logo}
+            src={
+              company?.image ? `http://localhost:3000${company.image}` : Logo
+            }
             alt="Logo"
             className="w-12 sm:w-32 h-auto object-contain"
           />
