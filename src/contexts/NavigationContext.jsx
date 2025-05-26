@@ -6,15 +6,18 @@ export const useNavigation = () => useContext(NavigationContext);
 
 export const NavigationProvider = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedTitle, setSelectedTitle] = useState("Menu Completo");
+  const [selectedMenu, setSelectedMenu] = useState({
+    name: "Menu Completo",
+    id: null,
+  });
   const [searchTerm, setSearchTerm] = useState("");
 
   const toggleSidebar = (isOpen) => {
     setIsSidebarOpen(isOpen);
   };
 
-  const updateSelectedTitle = (title) => {
-    setSelectedTitle(title);
+  const updateSelectedTitle = (menu) => {
+    setSelectedMenu(menu);
   };
 
   const updateSearchTerm = (term) => {
@@ -26,7 +29,7 @@ export const NavigationProvider = ({ children }) => {
       value={{
         isSidebarOpen,
         toggleSidebar,
-        selectedTitle,
+        selectedMenu,
         updateSelectedTitle,
         searchTerm,
         updateSearchTerm,

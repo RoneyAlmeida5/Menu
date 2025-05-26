@@ -17,7 +17,7 @@ const ProductManager = ({ theme, setTheme }) => {
   const [company, setCompany] = useState();
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts();
-  const { isSidebarOpen, selectedTitle, searchTerm, updateSearchTerm } =
+  const { isSidebarOpen, selectedMenu, searchTerm, updateSearchTerm } =
     useNavigation();
   const handleSearch = (term) => updateSearchTerm(term);
 
@@ -45,15 +45,20 @@ const ProductManager = ({ theme, setTheme }) => {
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("token");
+
+        const params = {};
+        if (selectedMenu.name !== "Menu Completo") {
+          params.menuId = selectedMenu.id;
+        }
+
         const res = await axios.get("http://localhost:3000/product", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          params: {
-            menuId:
-              selectedTitle !== "Menu Completo" ? selectedTitle : undefined,
-          },
+          params,
         });
+        console.log("Requisição produtos com params:", params, selectedMenu);
+
         setProducts(res.data);
       } catch (err) {
         console.error("Erro ao buscar produtos:", err);
@@ -61,7 +66,7 @@ const ProductManager = ({ theme, setTheme }) => {
     };
 
     fetchProducts();
-  }, [selectedTitle]);
+  }, [selectedMenu]);
 
   const [form, setForm] = useState({
     id: null,
@@ -73,17 +78,17 @@ const ProductManager = ({ theme, setTheme }) => {
   });
 
   const filteredItems = products.filter((item) => {
-    const title = item?.title || "";
-    const category = item?.category || "";
+    const title = item?.name || "";
 
     const matchesSearch = title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
 
-    const matchesCategory =
-      selectedTitle === "Menu Completo" || category === selectedTitle;
+    const categoryMatch =
+      selectedMenu.name === "Menu Completo" ||
+      item.menus?.some((menu) => menu.name === selectedMenu.name);
 
-    return matchesSearch && matchesCategory;
+    return matchesSearch && categoryMatch;
   });
 
   const handleChange = (e) => {
@@ -177,7 +182,7 @@ const ProductManager = ({ theme, setTheme }) => {
         </div>
 
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">
-          {searchTerm ? `Pesquisa: ${searchTerm}` : selectedTitle}
+          {searchTerm ? `Pesquisa: ${searchTerm}` : selectedMenu?.name}
         </h2>
 
         <ProductFormModal

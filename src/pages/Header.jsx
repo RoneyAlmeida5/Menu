@@ -12,7 +12,7 @@ function Header({ theme, setTheme }) {
   const [showText, setShowText] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedTitle } =
+  const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedMenu } =
     useNavigation();
   const [menuItems, setMenuItems] = useState([]);
   const [company, setCompany] = useState(null);
@@ -52,10 +52,12 @@ function Header({ theme, setTheme }) {
         const menusWithIcons = [
           {
             name: "Menu Completo",
+            id: null,
             icon: <FiberSmartRecordIcon fontSize="small" />,
           },
           ...fetchedMenus.map((menu) => ({
             name: menu.name,
+            id: menu.id,
             icon: <FiberSmartRecordIcon fontSize="small" />,
           })),
         ];
@@ -98,8 +100,8 @@ function Header({ theme, setTheme }) {
     };
   }, [isMobile, toggleSidebar]);
 
-  const handleClick = (name) => {
-    updateSelectedTitle(name);
+  const handleClick = (name, id) => {
+    updateSelectedTitle({ name, id });
     setMobileMenuOpen(false);
   };
 
@@ -150,10 +152,10 @@ function Header({ theme, setTheme }) {
             {menuItems.map((item, i) => (
               <li
                 key={i}
-                onClick={() => handleClick(item.name)}
+                onClick={() => handleClick(item.name, item.id)}
                 className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 w-full
             ${
-              item.name === selectedTitle
+              item.name === selectedMenu.name
                 ? theme === "dark"
                   ? "bg-gray-600 text-white"
                   : "bg-gray-300 text-black"
@@ -194,10 +196,10 @@ function Header({ theme, setTheme }) {
             {menuItems.map((item, i) => (
               <li
                 key={i}
-                onClick={() => handleClick(item.name)}
+                onClick={() => handleClick(item.name, item.id)}
                 className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200
                   ${
-                    item.name === selectedTitle
+                    item.name === selectedMenu.name
                       ? theme === "dark"
                         ? "bg-gray-600 text-white"
                         : "bg-gray-300 text-black"
