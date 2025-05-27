@@ -5,12 +5,12 @@ import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 
 const ProductFormModal = ({
-  form,
-  setForm,
-  handleChange,
-  handleSave,
-  open,
-  setOpen,
+  productForm,
+  setProductForm,
+  handleChangeProduct,
+  handleSaveProduct,
+  openModalProdut,
+  setOpenModalProduct,
   theme,
 }) => {
   const { user } = useUser();
@@ -33,21 +33,21 @@ const ProductFormModal = ({
     fetchCategories();
   }, [user]);
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => setOpenModalProduct(false);
 
   const handleSaveAndClose = () => {
-    handleSave();
+    handleSaveProduct();
     handleClose();
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={openModalProdut} onClose={handleClose}>
       <div className="flex items-center justify-center min-h-screen">
         <div
           className={`${baseClass} p-6 rounded-lg shadow-md w-full max-w-4xl mx-auto`}
         >
           <h2 className="text-xl font-semibold mb-8 text-center">
-            {form.id ? "Editar Produto" : "Adicionar Produto"}
+            {productForm?.id ? "Editar Produto" : "Adicionar Produto"}
           </h2>
 
           <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -56,8 +56,8 @@ const ProductFormModal = ({
               <input
                 type="text"
                 name="title"
-                value={form.title}
-                onChange={handleChange}
+                value={productForm?.title}
+                onChange={handleChangeProduct}
                 className={`w-full px-3 py-2 border rounded-md ${
                   isDark
                     ? "bg-gray-700 text-white border-gray-600"
@@ -71,8 +71,8 @@ const ProductFormModal = ({
               <input
                 type="text"
                 name="price"
-                value={form.price}
-                onChange={handleChange}
+                value={productForm?.price}
+                onChange={handleChangeProduct}
                 className={`w-full px-3 py-2 border rounded-md ${
                   isDark
                     ? "bg-gray-700 text-white border-gray-600"
@@ -90,8 +90,8 @@ const ProductFormModal = ({
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) {
-                    setForm({
-                      ...form,
+                    setProductForm({
+                      ...productForm,
                       img: URL.createObjectURL(file),
                     });
                   }
@@ -110,12 +110,12 @@ const ProductFormModal = ({
 
             <div>
               <label className="block text-sm font-medium mb-1">
-                Categoria
+                Categoria (Menu)
               </label>
               <select
                 name="category"
-                value={form.category}
-                onChange={handleChange}
+                value={productForm?.category}
+                onChange={handleChangeProduct}
                 className={`w-full px-3 py-2 border rounded-md ${
                   isDark
                     ? "bg-gray-700 text-white border-gray-600"
@@ -138,8 +138,8 @@ const ProductFormModal = ({
               <textarea
                 name="description"
                 rows="3"
-                value={form.description}
-                onChange={handleChange}
+                value={productForm?.description}
+                onChange={handleChangeProduct}
                 className={`w-full px-3 py-2 border rounded-md ${
                   isDark
                     ? "bg-gray-700 text-white border-gray-600"
@@ -155,7 +155,7 @@ const ProductFormModal = ({
               onClick={handleSaveAndClose}
               className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
             >
-              {form.id ? "Atualizar" : "Salvar"}
+              {productForm?.id ? "Atualizar" : "Salvar"}
             </button>
             <button
               type="button"

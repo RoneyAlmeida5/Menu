@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Tooltip from "@mui/material/Tooltip";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import Header from "./Header";
 import Logo from "../assets/Logo.png";
 import SearchBar from "../components/HeaderSearchComponents/SearchBar";
@@ -11,9 +13,11 @@ import { useNavigation } from "../contexts/NavigationContext";
 import BannerPromo from "../components/HomeComponents/BannerPromo";
 import CardProductsManager from "../components/ProductManager/CardProductsManager";
 import ProductFormModal from "../components/ProductManager/ProductFormModal";
+import MenuFormModal from "../components/ProductManager/MenuFormModal";
 
 const ProductManager = ({ theme, setTheme }) => {
-  const [open, setOpen] = useState(false);
+  const [openModalMenu, setOpenModalMenu] = useState(false);
+  const [openModalProdut, setOpenModalProduct] = useState(false);
   const [company, setCompany] = useState();
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts();
@@ -68,7 +72,28 @@ const ProductManager = ({ theme, setTheme }) => {
     fetchProducts();
   }, [selectedMenu]);
 
-  const [form, setForm] = useState({
+  // LOGICA PARA MENU (ADD/EDIT/DELET)
+  const [menuForm, setMenuForm] = useState({
+    id: null,
+    name: "",
+  });
+  const handleSaveMenu = () => {
+    if (!menuForm.name) return;
+
+    if (menuForm.id) {
+      updateMenu(menuForm);
+    } else {
+      addMenu(menuForm);
+    }
+
+    setMenuForm({
+      id: null,
+      name: "",
+    });
+  };
+
+  // LOGICA PARA PRODUTOS ADD/EDIT/DELET)
+  const [productForm, setProductForm] = useState({
     id: null,
     title: "",
     price: "",
@@ -76,7 +101,6 @@ const ProductManager = ({ theme, setTheme }) => {
     description: "",
     category: "",
   });
-
   const filteredItems = products.filter((item) => {
     const title = item?.name || "";
 
@@ -90,22 +114,20 @@ const ProductManager = ({ theme, setTheme }) => {
 
     return matchesSearch && categoryMatch;
   });
-
-  const handleChange = (e) => {
+  const handleChangeProdut = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setProductForm({ ...productForm, [name]: value });
   };
+  const handleSaveProduct = () => {
+    if (!productForm.title || !productForm.price) return;
 
-  const handleSave = () => {
-    if (!form.title || !form.price) return;
-
-    if (form.id) {
-      updateProduct(form);
+    if (productForm.id) {
+      updateProduct(productForm);
     } else {
-      addProduct(form);
+      addProduct(productForm);
     }
 
-    setForm({
+    setProductForm({
       id: null,
       title: "",
       price: "",
@@ -114,13 +136,11 @@ const ProductManager = ({ theme, setTheme }) => {
       category: "",
     });
   };
-
-  const handleEdit = (product) => {
-    setForm(product);
-    setOpen(true);
+  const handleEditProduct = (product) => {
+    setProductForm(product);
+    setOpenModalProduct(true);
   };
-
-  const handleDelete = (product) => {
+  const handleDeleteProduct = (product) => {
     deleteProduct(product.id);
   };
 
@@ -146,12 +166,28 @@ const ProductManager = ({ theme, setTheme }) => {
         <div className="mb-5 mt-1">
           <SearchBar onSearch={handleSearch} theme={theme} />
         </div>
+
         <BannerPromo />
+
         <div className="flex items-center justify-center">
+          <Tooltip title="Adicionar Menu" placement="bottom">
+            <button
+              onClick={() => {
+                setMenuForm({
+                  id: null,
+                  name: "",
+                });
+                setOpenModalMenu(true);
+              }}
+              className="mr-3 w-[50px] h-[50px] bg-green-700 my-1 flex items-center justify-center rounded-xl cursor-pointer relative overflow-hidden transition-all duration-500 ease-in-out shadow-md hover:scale-105 hover:shadow-lg before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-[#00611f] before:to-[rgb(190, 190, 190)] before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0 text-white"
+            >
+              <MenuBookIcon />
+            </button>
+          </Tooltip>
           <Tooltip title="Adicionar Produto" placement="bottom">
             <button
               onClick={() => {
-                setForm({
+                setProductForm({
                   id: null,
                   title: "",
                   price: "",
@@ -159,50 +195,44 @@ const ProductManager = ({ theme, setTheme }) => {
                   description: "",
                   category: "",
                 });
-                setOpen(true);
+                setOpenModalProduct(true);
               }}
               className="mr-3 w-[50px] h-[50px] bg-green-700 my-1 flex items-center justify-center rounded-xl cursor-pointer relative overflow-hidden transition-all duration-500 ease-in-out shadow-md hover:scale-105 hover:shadow-lg before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-[#00611f] before:to-[rgb(190, 190, 190)] before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0 text-white"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
+              <AddShoppingCartIcon />
             </button>
           </Tooltip>
         </div>
-
+        <ProductFormModal
+          form={productForm}
+          setForm={setProductForm}
+          handleChange={handleChangeProdut}
+          handleSave={handleSaveProduct}
+          openModalProdut={openModalProdut}
+          setOpenModalProduct={setOpenModalProduct}
+          theme={theme}
+        />
+        <MenuFormModal
+          form={menuForm}
+          setForm={setMenuForm}
+          handleSave={handleSaveMenu}
+          openModalMenu={openModalMenu}
+          setOpenModalMenu={setOpenModalMenu}
+          theme={theme}
+        />
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">
           {searchTerm ? `Pesquisa: ${searchTerm}` : selectedMenu?.name}
         </h2>
 
-        <ProductFormModal
-          form={form}
-          setForm={setForm}
-          handleChange={handleChange}
-          handleSave={handleSave}
-          open={open}
-          setOpen={setOpen}
-          theme={theme}
-        />
         <div className="grid md:grid-cols-3 gap-4">
           {filteredItems.map((item) => (
             <CardProductsManager
               key={item.id}
               item={item}
               onEdit={() => {
-                handleEdit(item);
+                handleEditProduct(item);
               }}
-              onDelete={() => handleDelete(item)}
+              onDelete={() => handleDeleteProduct(item)}
               theme={theme}
             />
           ))}
