@@ -17,7 +17,7 @@ import MenuFormModal from "../components/ProductManager/MenuFormModal";
 
 const ProductManager = ({ theme, setTheme }) => {
   const [openModalMenu, setOpenModalMenu] = useState(false);
-  const [openModalProdut, setOpenModalProduct] = useState(false);
+  const [openModalProduct, setOpenModalProduct] = useState(false);
   const [company, setCompany] = useState();
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts();
@@ -77,6 +77,21 @@ const ProductManager = ({ theme, setTheme }) => {
     id: null,
     name: "",
   });
+  const addMenu = async (menu) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:3000/menu",
+        { ...menu, companyId: company.id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("Menu adicionado:", response.data);
+    } catch (error) {
+      console.error("Erro ao adicionar menu:", error);
+    }
+  };
   const handleSaveMenu = () => {
     if (!menuForm.name) return;
 
@@ -91,6 +106,21 @@ const ProductManager = ({ theme, setTheme }) => {
       name: "",
     });
   };
+  const updateMenu = async (menu) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `http://localhost:3000/menu/${menu.id}`,
+        { ...menu },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("Menu atualizado:", response.data);
+    } catch (error) {
+      console.error("Erro ao atualizar menu:", error);
+    }
+  };
 
   // LOGICA PARA PRODUTOS ADD/EDIT/DELET)
   const [productForm, setProductForm] = useState({
@@ -99,7 +129,7 @@ const ProductManager = ({ theme, setTheme }) => {
     price: "",
     img: "",
     description: "",
-    category: "",
+    menuId: "",
   });
   const filteredItems = products.filter((item) => {
     const title = item?.name || "";
@@ -118,22 +148,43 @@ const ProductManager = ({ theme, setTheme }) => {
     const { name, value } = e.target;
     setProductForm({ ...productForm, [name]: value });
   };
-  const handleSaveProduct = () => {
+  const handleSaveProduct = async () => {
     if (!productForm.title || !productForm.price) return;
 
-    if (productForm.id) {
-      updateProduct(productForm);
-    } else {
-      addProduct(productForm);
+    const token = localStorage.getItem("token");
+
+    const data = {
+      ...productForm,
+      companyId: company.id,
+    };
+
+    try {
+      if (productForm.id) {
+        await axios.put(
+          `http://localhost:3000/product/${productForm.id}`,
+          data,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        console.log("Produto atualizado");
+      } else {
+        await axios.post("http://localhost:3000/product", data, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Produto criado");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar produto:", error);
     }
 
     setProductForm({
       id: null,
       title: "",
       price: "",
-      img: "",
       description: "",
-      category: "",
+      img: "",
+      menuId: "",
     });
   };
   const handleEditProduct = (product) => {
@@ -204,18 +255,18 @@ const ProductManager = ({ theme, setTheme }) => {
           </Tooltip>
         </div>
         <ProductFormModal
-          form={productForm}
-          setForm={setProductForm}
+          productForm={productForm}
+          setProductForm={setProductForm}
           handleChange={handleChangeProdut}
           handleSave={handleSaveProduct}
-          openModalProdut={openModalProdut}
+          openModalProduct={openModalProduct}
           setOpenModalProduct={setOpenModalProduct}
           theme={theme}
         />
         <MenuFormModal
-          form={menuForm}
-          setForm={setMenuForm}
-          handleSave={handleSaveMenu}
+          menuForm={menuForm}
+          setMenuForm={setMenuForm}
+          handleSaveMenu={handleSaveMenu}
           openModalMenu={openModalMenu}
           setOpenModalMenu={setOpenModalMenu}
           theme={theme}

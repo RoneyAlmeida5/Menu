@@ -2,36 +2,36 @@ import React, { useState, useEffect } from "react";
 import { Modal } from "@mui/material";
 import { FiImage } from "react-icons/fi";
 import axios from "axios";
-import { useUser } from "../../contexts/UserContext";
 
 const ProductFormModal = ({
   productForm,
   setProductForm,
   handleChangeProduct,
   handleSaveProduct,
-  openModalProdut,
+  openModalProduct,
   setOpenModalProduct,
   theme,
 }) => {
-  const { user } = useUser();
   const [categories, setCategories] = useState([]);
   const isDark = theme === "dark";
   const baseClass = isDark ? "bg-gray-800 text-white" : "bg-white text-black";
 
   useEffect(() => {
     const fetchCategories = async () => {
-      if (user?.companyId) {
-        try {
-          const response = await axios.get(`/menu/${user.companyId}`);
-          setCategories(response.data);
-        } catch (error) {
-          console.error("Erro ao buscar categorias:", error);
-        }
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/menu", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Menus recebidos:", response.data);
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar categorias:", error);
       }
     };
 
     fetchCategories();
-  }, [user]);
+  }, []);
 
   const handleClose = () => setOpenModalProduct(false);
 
@@ -41,7 +41,7 @@ const ProductFormModal = ({
   };
 
   return (
-    <Modal open={openModalProdut} onClose={handleClose}>
+    <Modal open={openModalProduct} onClose={handleClose}>
       <div className="flex items-center justify-center min-h-screen">
         <div
           className={`${baseClass} p-6 rounded-lg shadow-md w-full max-w-4xl mx-auto`}
@@ -109,25 +109,29 @@ const ProductFormModal = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Categoria (Menu)
-              </label>
+              <label className="block text-sm font-medium mb-1">Menu</label>
               <select
-                name="category"
-                value={productForm?.category}
-                onChange={handleChangeProduct}
-                className={`w-full px-3 py-2 border rounded-md ${
+                name="menuId"
+                value={productForm?.menuId || ""}
+                onChange={(e) =>
+                  setProductForm({
+                    ...productForm,
+                    menuId: Number(e.target.value),
+                  })
+                }
+                className={`w-full px-2 py-2 border rounded-md ${
                   isDark
                     ? "bg-gray-700 text-white border-gray-600"
                     : "border-gray-300"
                 } focus:outline-none focus:ring focus:border-blue-500`}
               >
-                <option value="">Selecione uma categoria</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
+                <option value="">Selecione um Menu</option>
+                {Array.isArray(categories) &&
+                  categories.map((menu) => (
+                    <option key={menu.id} value={menu.id}>
+                      {menu.name}
+                    </option>
+                  ))}
               </select>
             </div>
 

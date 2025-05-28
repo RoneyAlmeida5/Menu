@@ -11,25 +11,8 @@ const MenuFormModal = ({
   setOpenModalMenu,
   theme,
 }) => {
-  const { user } = useUser();
-  const [categories, setCategories] = useState([]);
   const isDark = theme === "dark";
   const baseClass = isDark ? "bg-gray-800 text-white" : "bg-white text-black";
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      if (user?.companyId) {
-        try {
-          const response = await axios.get(`/menu/${user.companyId}`);
-          setCategories(response.data);
-        } catch (error) {
-          console.error("Erro ao buscar categorias:", error);
-        }
-      }
-    };
-
-    fetchCategories();
-  }, [user]);
 
   const handleClose = () => setOpenModalMenu(false);
 
@@ -55,8 +38,11 @@ const MenuFormModal = ({
               </label>
               <input
                 type="text"
-                name="title"
+                name="name"
                 value={menuForm?.name}
+                onChange={(e) =>
+                  setMenuForm({ ...menuForm, name: e.target.value })
+                }
                 className={`w-full px-2 py-2 border rounded-md ${
                   isDark
                     ? "bg-gray-700 text-white border-gray-600"
