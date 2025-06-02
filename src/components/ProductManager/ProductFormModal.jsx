@@ -12,25 +12,24 @@ const ProductFormModal = ({
   setOpenModalProduct,
   theme,
 }) => {
-  const [categories, setCategories] = useState([]);
+  const [menus, setMenus] = useState([]);
   const isDark = theme === "dark";
   const baseClass = isDark ? "bg-gray-800 text-white" : "bg-white text-black";
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchMenus = async () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get("http://localhost:3000/menu", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Menus recebidos:", response.data);
-        setCategories(response.data);
+        setMenus(response.data);
       } catch (error) {
-        console.error("Erro ao buscar categorias:", error);
+        console.error("Erro ao buscar menus:", error);
       }
     };
 
-    fetchCategories();
+    fetchMenus();
   }, []);
 
   const handleClose = () => setOpenModalProduct(false);
@@ -55,8 +54,8 @@ const ProductFormModal = ({
               <label className="block text-sm font-medium mb-1">Título</label>
               <input
                 type="text"
-                name="title"
-                value={productForm?.title}
+                name="name"
+                value={productForm?.name ?? ""}
                 onChange={handleChangeProduct}
                 className={`w-full px-3 py-2 border rounded-md ${
                   isDark
@@ -69,9 +68,9 @@ const ProductFormModal = ({
             <div>
               <label className="block text-sm font-medium mb-1">Preço</label>
               <input
-                type="text"
-                name="price"
-                value={productForm?.price}
+                type="number"
+                name="value"
+                value={productForm?.value}
                 onChange={handleChangeProduct}
                 className={`w-full px-3 py-2 border rounded-md ${
                   isDark
@@ -85,14 +84,14 @@ const ProductFormModal = ({
               <label className="block text-sm font-medium mb-1">Imagem</label>
               <input
                 type="file"
-                name="img"
+                name="image"
                 accept="image/jpeg, image/png, image/jpg"
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) {
                     setProductForm({
                       ...productForm,
-                      img: URL.createObjectURL(file),
+                      image: URL.createObjectURL(file),
                     });
                   }
                 }}
@@ -111,12 +110,12 @@ const ProductFormModal = ({
             <div>
               <label className="block text-sm font-medium mb-1">Menu</label>
               <select
-                name="menuId"
-                value={productForm?.menuId || ""}
+                name="menuIds"
+                value={productForm?.menuIds || ""}
                 onChange={(e) =>
                   setProductForm({
                     ...productForm,
-                    menuId: Number(e.target.value),
+                    menuIds: Number(e.target.value),
                   })
                 }
                 className={`w-full px-2 py-2 border rounded-md ${
@@ -126,12 +125,11 @@ const ProductFormModal = ({
                 } focus:outline-none focus:ring focus:border-blue-500`}
               >
                 <option value="">Selecione um Menu</option>
-                {Array.isArray(categories) &&
-                  categories.map((menu) => (
-                    <option key={menu.id} value={menu.id}>
-                      {menu.name}
-                    </option>
-                  ))}
+                {menus.map((menu) => (
+                  <option key={menu.id} value={menu.id}>
+                    {menu.name}
+                  </option>
+                ))}
               </select>
             </div>
 

@@ -45,32 +45,25 @@ const ProductManager = ({ theme, setTheme }) => {
   }, []);
 
   // EFFECT PARA REQ DE PRODUTOS
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const fetchProducts = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        const params = {};
-        if (selectedMenu.name !== "Menu Completo") {
-          params.menuId = selectedMenu.id;
-        }
-
-        const res = await axios.get("http://localhost:3000/product", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params,
-        });
-        console.log("Requisição produtos com params:", params, selectedMenu);
-
-        setProducts(res.data);
-      } catch (err) {
-        console.error("Erro ao buscar produtos:", err);
+      const params = {};
+      if (selectedMenu.name !== "Menu Completo") {
+        params.menuId = selectedMenu.id;
       }
-    };
 
-    fetchProducts();
-  }, [selectedMenu]);
+      const res = await axios.get("http://localhost:3000/product", {
+        headers: { Authorization: `Bearer ${token}` },
+        params,
+      });
+
+      setProducts(res.data);
+    } catch (err) {
+      console.error("Erro ao buscar produtos:", err);
+    }
+  };
 
   // LOGICA PARA MENU (ADD/EDIT/DELET)
   const [menuForm, setMenuForm] = useState({
@@ -125,12 +118,15 @@ const ProductManager = ({ theme, setTheme }) => {
   // LOGICA PARA PRODUTOS ADD/EDIT/DELET)
   const [productForm, setProductForm] = useState({
     id: null,
-    title: "",
-    price: "",
-    img: "",
+    name: "",
+    value: "",
+    image: "",
     description: "",
-    menuId: "",
+    menuIds: "",
   });
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedMenu]);
   const filteredItems = products.filter((item) => {
     const title = item?.name || "";
 
@@ -144,28 +140,30 @@ const ProductManager = ({ theme, setTheme }) => {
 
     return matchesSearch && categoryMatch;
   });
-  const handleChangeProdut = (e) => {
+  const handleChangeProduct = (e) => {
     const { name, value } = e.target;
     setProductForm({ ...productForm, [name]: value });
   };
   const handleSaveProduct = async () => {
-    if (!productForm.title || !productForm.price) return;
-
-    const token = localStorage.getItem("token");
+    if (!productForm.name.trim() || !productForm.value) {
+      alert("Preencha nome e preço.");
+      return;
+    }
 
     const data = {
       ...productForm,
       companyId: company.id,
+      menuIds: [Number(productForm.menuIds)],
     };
+
+    const token = localStorage.getItem("token");
 
     try {
       if (productForm.id) {
         await axios.put(
           `http://localhost:3000/product/${productForm.id}`,
           data,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log("Produto atualizado");
       } else {
@@ -174,25 +172,36 @@ const ProductManager = ({ theme, setTheme }) => {
         });
         console.log("Produto criado");
       }
+
+      fetchProducts();
+      setOpenModalProduct(false);
+      setProductForm({
+        id: null,
+        name: "",
+        value: "",
+        image: "",
+        description: "",
+        menuIds: "",
+      });
     } catch (error) {
       console.error("Erro ao salvar produto:", error);
     }
-
-    setProductForm({
-      id: null,
-      title: "",
-      price: "",
-      description: "",
-      img: "",
-      menuId: "",
-    });
   };
   const handleEditProduct = (product) => {
     setProductForm(product);
     setOpenModalProduct(true);
   };
-  const handleDeleteProduct = (product) => {
-    deleteProduct(product.id);
+  const handleDeleteProduct = async (product) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:3000/product/${product.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchProducts();
+      console.log("Produto deletado");
+    } catch (error) {
+      console.error("Erro ao deletar produto:", error);
+    }
   };
 
   const backgroundClass =
@@ -240,11 +249,11 @@ const ProductManager = ({ theme, setTheme }) => {
               onClick={() => {
                 setProductForm({
                   id: null,
-                  title: "",
-                  price: "",
-                  img: "",
+                  name: "",
+                  value: "",
+                  image: "",
                   description: "",
-                  category: "",
+                  menuIds: "",
                 });
                 setOpenModalProduct(true);
               }}
@@ -257,8 +266,8 @@ const ProductManager = ({ theme, setTheme }) => {
         <ProductFormModal
           productForm={productForm}
           setProductForm={setProductForm}
-          handleChange={handleChangeProdut}
-          handleSave={handleSaveProduct}
+          handleChangeProduct={handleChangeProduct}
+          handleSaveProduct={handleSaveProduct}
           openModalProduct={openModalProduct}
           setOpenModalProduct={setOpenModalProduct}
           theme={theme}
