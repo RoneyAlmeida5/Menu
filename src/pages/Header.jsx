@@ -4,6 +4,8 @@ import FiberSmartRecordIcon from "@mui/icons-material/FiberSmartRecord";
 import { useNavigation } from "../contexts/NavigationContext";
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
+import { IconButton, Tooltip } from "@mui/material";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
 import axios from "axios";
 
@@ -37,39 +39,52 @@ function Header({ theme, setTheme }) {
   }, []);
 
   // EFFECT PARA REQ DE MENU
+  const fetchMenus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:3000/menu", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const fetchedMenus = response.data || [];
+
+      const menusWithIcons = [
+        {
+          name: "Menu Completo",
+          id: null,
+          icon: <FiberSmartRecordIcon fontSize="small" />,
+        },
+        ...fetchedMenus.map((menu) => ({
+          name: menu.name,
+          id: menu.id,
+          icon: <FiberSmartRecordIcon fontSize="small" />,
+        })),
+      ];
+
+      setMenuItems(menusWithIcons);
+    } catch (error) {
+      console.error("Erro ao buscar menus:", error);
+    }
+  };
   useEffect(() => {
-    const fetchMenus = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/menu", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const fetchedMenus = response.data || [];
-
-        const menusWithIcons = [
-          {
-            name: "Menu Completo",
-            id: null,
-            icon: <FiberSmartRecordIcon fontSize="small" />,
-          },
-          ...fetchedMenus.map((menu) => ({
-            name: menu.name,
-            id: menu.id,
-            icon: <FiberSmartRecordIcon fontSize="small" />,
-          })),
-        ];
-
-        setMenuItems(menusWithIcons);
-      } catch (error) {
-        console.error("Erro ao buscar menus:", error);
-      }
-    };
-
     fetchMenus();
   }, []);
+  const handleDeleteMenu = async (menu) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:3000/menu/${menu.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Menu deletado com sucesso");
+      fetchMenus();
+      console.log("Menu deletado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar menu:", error);
+      toast.error("Erro ao deletar menu");
+    }
+  };
 
   // EFFECT PARA MOBILE & WEB
   useEffect(() => {
@@ -167,6 +182,16 @@ function Header({ theme, setTheme }) {
               >
                 {item.icon}
                 <span>{item.name}</span>
+                {item.id !== null && (
+                  <div className="ml-auto">
+                    <IconButton
+                      onClick={() => handleDeleteMenu(item)}
+                      color="error"
+                    >
+                      <DeleteRoundedIcon />
+                    </IconButton>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -211,6 +236,20 @@ function Header({ theme, setTheme }) {
               >
                 {item.icon}
                 {showText && <span>{item.name}</span>}
+                {showText && item.id !== null && (
+                  <div className="ml-auto">
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteMenu(item);
+                      }}
+                    >
+                      <DeleteRoundedIcon fontSize="small" />
+                    </IconButton>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
