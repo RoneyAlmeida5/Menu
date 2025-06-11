@@ -308,7 +308,7 @@ const ProductManager = ({ theme, setTheme }) => {
           {searchTerm ? `Pesquisa: ${searchTerm}` : selectedMenu?.name}
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-4 gap-4">
           {filteredItems.map((item) => (
             <CardProductsManager
               key={item.id}
