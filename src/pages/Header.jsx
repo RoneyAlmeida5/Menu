@@ -77,12 +77,10 @@ function Header({ theme, setTheme }) {
       await axios.delete(`http://localhost:3000/menu/${menu.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success("Menu deletado com sucesso");
       fetchMenus();
       console.log("Menu deletado com sucesso!");
     } catch (error) {
       console.error("Erro ao deletar menu:", error);
-      toast.error("Erro ao deletar menu");
     }
   };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "@mui/material";
 import { FiImage } from "react-icons/fi";
+import Select from "react-select";
 import axios from "axios";
 
 const ProductFormModal = ({
@@ -103,28 +104,72 @@ const ProductFormModal = ({
 
             <div>
               <label className="block text-sm font-medium mb-1">Menu</label>
-              <select
+              <Select
+                isMulti
                 name="menuIds"
-                value={productForm?.menuIds || ""}
-                onChange={(e) =>
+                options={menus.map((menu) => ({
+                  value: menu.id,
+                  label: menu.name,
+                }))}
+                value={(productForm?.menuIds || [])
+                  .map((id) => menus.find((menu) => menu.id === id))
+                  .filter(Boolean)
+                  .map((menu) => ({ value: menu.id, label: menu.name }))}
+                onChange={(selectedOptions) =>
                   setProductForm({
                     ...productForm,
-                    menuIds: Number(e.target.value),
+                    menuIds: selectedOptions.map((opt) => opt.value),
                   })
                 }
-                className={`w-full px-2 py-2 border rounded-md ${
-                  isDark
-                    ? "bg-gray-700 text-white border-gray-600"
-                    : "border-gray-300"
-                } focus:outline-none focus:ring focus:border-blue-500`}
-              >
-                <option value="">Selecione um Menu</option>
-                {menus.map((menu) => (
-                  <option key={menu.id} value={menu.id}>
-                    {menu.name}
-                  </option>
-                ))}
-              </select>
+                placeholder="Selecione um ou mais menus"
+                className="w-full"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    backgroundColor: isDark ? "#374151" : "white",
+                    borderColor: isDark ? "#4B5563" : "#D1D5DB",
+                    color: isDark ? "white" : "black",
+                    minHeight: "44px",
+                  }),
+                  input: (base) => ({
+                    ...base,
+                    color: isDark ? "white" : "black",
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    backgroundColor: isDark ? "#1F2937" : "white",
+                    color: isDark ? "white" : "black",
+                  }),
+                  option: (base, state) => ({
+                    ...base,
+                    backgroundColor: state.isFocused
+                      ? isDark
+                        ? "#4B5563"
+                        : "#E5E7EB"
+                      : isDark
+                      ? "#1F2937"
+                      : "white",
+                    color: isDark ? "white" : "black",
+                    cursor: "pointer",
+                  }),
+                  multiValue: (base) => ({
+                    ...base,
+                    backgroundColor: isDark ? "#4B5563" : "#E5E7EB",
+                  }),
+                  multiValueLabel: (base) => ({
+                    ...base,
+                    color: isDark ? "white" : "black",
+                  }),
+                  multiValueRemove: (base) => ({
+                    ...base,
+                    color: isDark ? "white" : "black",
+                    ":hover": {
+                      backgroundColor: isDark ? "#9CA3AF" : "#D1D5DB",
+                      color: "black",
+                    },
+                  }),
+                }}
+              />
             </div>
 
             <div className="md:col-span-2">

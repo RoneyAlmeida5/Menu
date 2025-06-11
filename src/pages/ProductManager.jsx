@@ -164,21 +164,37 @@ const ProductManager = ({ theme, setTheme }) => {
       ? [transformMenuIdsinAny]
       : [];
 
-    menuIdsArray.forEach((id) => formData.append("menuIds[]", id));
+    formData.append("menuIds", JSON.stringify(menuIdsArray));
 
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
 
     const token = localStorage.getItem("token");
+    console.log("Enviando dados:", productForm);
 
     try {
-      await axios.post("http://localhost:3000/product", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      if (productForm.id) {
+        // EDIÇÃO (PUT)
+        await axios.put(
+          `http://localhost:3000/product/${productForm.id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        // CRIAÇÃO (POST)
+        await axios.post("http://localhost:3000/product", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
 
       fetchProducts();
       setOpenModalProduct(false);
@@ -210,7 +226,6 @@ const ProductManager = ({ theme, setTheme }) => {
         ? product.menus.map((m) => m.id)
         : [],
     });
-    setSelectedImage(null);
     setOpenModalProduct(true);
   };
   const handleDeleteProduct = async (product) => {
@@ -275,8 +290,9 @@ const ProductManager = ({ theme, setTheme }) => {
                   value: "",
                   image: "",
                   description: "",
-                  menuIds: "",
+                  menuIds: [],
                 });
+                setSelectedImage(null);
                 setOpenModalProduct(true);
               }}
               className="mr-3 w-[50px] h-[50px] bg-green-700 my-1 flex items-center justify-center rounded-xl cursor-pointer relative overflow-hidden transition-all duration-500 ease-in-out shadow-md hover:scale-105 hover:shadow-lg before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-[#00611f] before:to-[rgb(190, 190, 190)] before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0 text-white"
