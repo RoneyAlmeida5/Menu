@@ -18,6 +18,7 @@ import MenuFormModal from "../components/ProductManager/MenuFormModal";
 const ProductManager = ({ theme, setTheme }) => {
   const [openModalMenu, setOpenModalMenu] = useState(false);
   const [openModalProduct, setOpenModalProduct] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [company, setCompany] = useState();
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts();
@@ -122,7 +123,7 @@ const ProductManager = ({ theme, setTheme }) => {
     value: "",
     image: "",
     description: "",
-    menuIds: "",
+    menuIds: [],
   });
   useEffect(() => {
     fetchProducts();
@@ -150,28 +151,34 @@ const ProductManager = ({ theme, setTheme }) => {
       return;
     }
 
-    const data = {
-      ...productForm,
-      companyId: company.id,
-      menuIds: [Number(productForm.menuIds)],
-    };
+    const formData = new FormData();
+    formData.append("name", productForm.name);
+    formData.append("value", productForm.value);
+    formData.append("description", productForm.description);
+    formData.append("companyId", company.id);
+
+    const transformMenuIdsinAny = productForm.menuIds;
+    const menuIdsArray = Array.isArray(transformMenuIdsinAny)
+      ? transformMenuIdsinAny
+      : typeof transformMenuIdsinAny === "number"
+      ? [transformMenuIdsinAny]
+      : [];
+
+    menuIdsArray.forEach((id) => formData.append("menuIds[]", id));
+
+    if (selectedImage) {
+      formData.append("image", selectedImage);
+    }
 
     const token = localStorage.getItem("token");
 
     try {
-      if (productForm.id) {
-        await axios.put(
-          `http://localhost:3000/product/${productForm.id}`,
-          data,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        console.log("Produto atualizado");
-      } else {
-        await axios.post("http://localhost:3000/product", data, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Produto criado");
-      }
+      await axios.post("http://localhost:3000/product", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       fetchProducts();
       setOpenModalProduct(false);
@@ -181,14 +188,29 @@ const ProductManager = ({ theme, setTheme }) => {
         value: "",
         image: "",
         description: "",
-        menuIds: "",
+        menuIds: [],
       });
+      setSelectedImage(null);
     } catch (error) {
-      console.error("Erro ao salvar produto:", error);
+      console.error(
+        "Erro ao salvar produto com imagem:",
+        error.response?.data || error.message
+      );
     }
   };
+
   const handleEditProduct = (product) => {
-    setProductForm(product);
+    setProductForm({
+      id: product.id,
+      name: product.name,
+      value: product.value,
+      description: product.description,
+      image: product.image,
+      menuIds: Array.isArray(product.menus)
+        ? product.menus.map((m) => m.id)
+        : [],
+    });
+    setSelectedImage(null);
     setOpenModalProduct(true);
   };
   const handleDeleteProduct = async (product) => {
@@ -266,6 +288,8 @@ const ProductManager = ({ theme, setTheme }) => {
         <ProductFormModal
           productForm={productForm}
           setProductForm={setProductForm}
+          selectedImage={selectedImage}
+          setSelectedImage={setSelectedImage}
           handleChangeProduct={handleChangeProduct}
           handleSaveProduct={handleSaveProduct}
           openModalProduct={openModalProduct}

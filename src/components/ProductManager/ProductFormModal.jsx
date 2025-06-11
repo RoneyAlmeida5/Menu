@@ -6,6 +6,8 @@ import axios from "axios";
 const ProductFormModal = ({
   productForm,
   setProductForm,
+  selectedImage,
+  setSelectedImage,
   handleChangeProduct,
   handleSaveProduct,
   openModalProduct,
@@ -85,16 +87,8 @@ const ProductFormModal = ({
               <input
                 type="file"
                 name="image"
-                accept="image/jpeg, image/png, image/jpg"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    setProductForm({
-                      ...productForm,
-                      image: URL.createObjectURL(file),
-                    });
-                  }
-                }}
+                accept="image/*"
+                onChange={(e) => setSelectedImage(e.target.files[0])}
                 className={`cursor-pointer w-full px-3 py-2 border rounded-md ${
                   isDark
                     ? "bg-gray-700 text-white border-gray-600"
