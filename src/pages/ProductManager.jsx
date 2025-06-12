@@ -23,6 +23,10 @@ const ProductManager = ({ theme, setTheme }) => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [company, setCompany] = useState();
+  // BANNER
+  const [bannerFile, setBannerFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [uploadedPath, setUploadedPath] = useState("");
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts();
   const { isSidebarOpen, selectedMenu, searchTerm, updateSearchTerm } =
@@ -66,6 +70,40 @@ const ProductManager = ({ theme, setTheme }) => {
       setProducts(res.data);
     } catch (err) {
       console.error("Erro ao buscar produtos:", err);
+    }
+  };
+
+  // BANNER PROMO
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setBannerFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const handleUpload = async () => {
+    if (!bannerFile) return;
+
+    const formData = new FormData();
+    formData.append("banner", bannerFile);
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/companies/banner",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setUploadedPath(response.data.path);
+      alert("Banner enviado com sucesso!");
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao enviar banner.");
     }
   };
 
@@ -271,7 +309,23 @@ const ProductManager = ({ theme, setTheme }) => {
           <SearchBar onSearch={handleSearch} theme={theme} />
         </div>
 
-        <BannerPromo />
+        <div className="space-y-4">
+          <input type="file" accept="image/*" onChange={handleFileChange} />
+          {preview && (
+            <img
+              src={preview}
+              alt="Prévia"
+              className="w-full h-64 object-cover rounded-lg"
+            />
+          )}
+          <button
+            onClick={handleUpload}
+            className="bg-blue-600 text-white py-2 px-4 rounded-lg cursor-pointer"
+          >
+            Enviar Banner
+          </button>
+        </div>
+        <BannerPromo company={company} />
 
         <div className="flex items-center justify-center">
           <Tooltip title="Adicionar Menu" placement="bottom">
