@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
+import Logo from "../assets/Logo.png";
 
-function Login() {
+function Login({ theme, setTheme }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -36,60 +38,68 @@ function Login() {
     }
   };
 
+  const containerTheme =
+    theme === "dark" ? "bg-gray-900 text-gray-500" : "bg-white text-gray-900";
+  const cardTheme =
+    theme === "dark"
+      ? "bg-gray-900 text-gray-300 border-gray-700"
+      : "bg-gray-100 text-gray-900 border-gray-600";
+
   return (
-    <div className="flex items-center justify-center relative py-30 sm:max-w-xs sm:mx-auto">
-      <div className="flex items-center justify-center min-h-96 px-8 py-6 mt-4 text-left bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-        <div className="flex flex-col justify-center items-center h-full select-none">
-          <div className="flex flex-col items-center justify-center gap-2 mb-8">
-            <p className="m-0 text-[16px] font-semibold dark:text-white">
-              DelishUp
-            </p>
-            <span className="m-0 text-xs max-w-[90%] text-center text-[#8B8E98]">
-              Entre na sua conta e descubra uma nova experiência com o nosso
-              sistema de PDV!
-            </span>
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-xs mb-3 text-center">{error}</div>
-          )}
-
-          <div className="w-full flex flex-col gap-2">
-            <label className="font-semibold text-xs text-gray-400">Email</label>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
-            />
-          </div>
-
-          <div className="w-full flex flex-col gap-2">
-            <label className="font-semibold text-xs text-gray-400">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
-            />
-          </div>
-
-          <div>
-            <button
-              onClick={handleLogin}
-              className="py-1 px-8 bg-blue-500 hover:bg-blue-800 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none"
-            >
-              Login
-            </button>
-          </div>
-          <span className="mt-5 text-xs max-w-[90%] text-center text-[#8B8E98]">
-            Converse com nossos consultores! Eles vão te ajudar a encontrar o
-            plano perfeito para você.
-          </span>
+    <div
+      className={`min-h-screen flex items-center justify-center px-4 ${containerTheme} transition-colors duration-300`}
+    >
+      <div
+        className={`w-full max-w-md p-4 rounded-2xl shadow-xl border ${cardTheme}`}
+      >
+        <div className="flex justify-end items-center">
+          <ThemeToggle theme={theme} setTheme={setTheme} />
         </div>
+        <div className="flex justify-center items-center">
+          <img src={Logo} className="w-48 h-48" />
+        </div>
+        <p className="mb-4 text-center text-sm text-gray-500 dark:text-gray-500 mt-2">
+          Acesse sua conta e transforme seu PDV.
+        </p>
+
+        {error && (
+          <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-4 text-sm text-center">
+            {error}
+          </div>
+        )}
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="seuemail@exemplo.com"
+            className="w-full px-3 py-2 border rounded-lg text-sm outline-none dark:bg-gray-500 dark:border-gray-600"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-1">Senha</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            className="w-full px-3 py-2 border rounded-lg text-sm outline-none dark:bg-gray-500 dark:border-gray-600"
+          />
+        </div>
+
+        <button
+          onClick={handleLogin}
+          className="w-full bg-orange-500/90 hover:bg-orange-600/80 text-white font-semibold cursor-pointer py-2 px-4 rounded-lg transition-colors"
+        >
+          Entrar
+        </button>
+
+        <p className="mt-5 text-xs text-center text-gray-500 dark:text-gray-500">
+          Precisa de ajuda? Fale com nossos consultores.
+        </p>
       </div>
     </div>
   );

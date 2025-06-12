@@ -4,7 +4,7 @@ import FiberSmartRecordIcon from "@mui/icons-material/FiberSmartRecord";
 import { useNavigation } from "../contexts/NavigationContext";
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton } from "@mui/material";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
 import axios from "axios";

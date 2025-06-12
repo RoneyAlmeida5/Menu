@@ -31,7 +31,7 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Login theme={theme} setTheme={setTheme} />} />
         <Route
           path="/management"
           element={
