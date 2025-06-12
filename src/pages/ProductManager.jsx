@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Header from "./Header";
 import Logo from "../assets/Logo.png";
 import SearchBar from "../components/HeaderSearchComponents/SearchBar";
@@ -10,6 +11,7 @@ import SearchBar from "../components/HeaderSearchComponents/SearchBar";
 import axios from "axios";
 import { useProducts } from "../contexts/ProductsContext";
 import { useNavigation } from "../contexts/NavigationContext";
+import { useNavigate } from "react-router";
 import BannerPromo from "../components/HomeComponents/BannerPromo";
 import CardProductsManager from "../components/ProductManager/CardProductsManager";
 import ProductFormModal from "../components/ProductManager/ProductFormModal";
@@ -18,6 +20,7 @@ import MenuFormModal from "../components/ProductManager/MenuFormModal";
 const ProductManager = ({ theme, setTheme }) => {
   const [openModalMenu, setOpenModalMenu] = useState(false);
   const [openModalProduct, setOpenModalProduct] = useState(false);
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [company, setCompany] = useState();
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
@@ -214,7 +217,6 @@ const ProductManager = ({ theme, setTheme }) => {
       );
     }
   };
-
   const handleEditProduct = (product) => {
     setProductForm({
       id: product.id,
@@ -239,6 +241,11 @@ const ProductManager = ({ theme, setTheme }) => {
     } catch (error) {
       console.error("Erro ao deletar produto:", error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   const backgroundClass =
@@ -298,6 +305,14 @@ const ProductManager = ({ theme, setTheme }) => {
               className="mr-3 w-[50px] h-[50px] bg-green-700 my-1 flex items-center justify-center rounded-xl cursor-pointer relative overflow-hidden transition-all duration-500 ease-in-out shadow-md hover:scale-105 hover:shadow-lg before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-[#00611f] before:to-[rgb(190, 190, 190)] before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0 text-white"
             >
               <AddShoppingCartIcon />
+            </button>
+          </Tooltip>
+          <Tooltip title="Sair" placement="bottom">
+            <button
+              onClick={handleLogout}
+              className="w-[50px] h-[50px] bg-red-700 my-1 flex items-center justify-center rounded-xl cursor-pointer relative overflow-hidden transition-all duration-500 ease-in-out shadow-md hover:scale-105 hover:shadow-lg before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-[#8B0000] before:to-[rgb(190, 190, 190)] before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0 text-white"
+            >
+              <LogoutIcon />
             </button>
           </Tooltip>
         </div>
