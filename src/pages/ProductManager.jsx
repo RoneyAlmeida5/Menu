@@ -261,7 +261,7 @@ const ProductManager = ({ theme, setTheme }) => {
         <img
           src={company?.image ? `http://localhost:3000${company.image}` : Logo}
           alt="Logo"
-          className="w-12 sm:w-16 h-auto object-contain"
+          className="w-12 sm:w-16 mt-2 mb-1 h-auto object-contain rounded-xl"
         />
       </div>
       <Header theme={theme} setTheme={setTheme} />

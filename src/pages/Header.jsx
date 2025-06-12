@@ -144,7 +144,7 @@ function Header({ theme, setTheme }) {
           onClick={toggleMobileMenu}
           className="absolute left-4 text-2xl focus:outline-none"
         >
-          {mobileMenuOpen ? <IoClose className="h-7 w-7 mb-105" /> : <HiMenu />}
+          {mobileMenuOpen ? <IoClose className="h-7 w-7 mb-28" /> : <HiMenu />}
         </button>
         <div className="flex items-center justify-center">
           <img
@@ -152,7 +152,7 @@ function Header({ theme, setTheme }) {
               company?.image ? `http://localhost:3000${company.image}` : Logo
             }
             alt="Logo"
-            className="w-15 mr-2 object-contain"
+            className="w-15 mr-2 rounded-xl mt-2 object-contain"
           />
         </div>
         {!mobileMenuOpen && (
@@ -211,7 +211,7 @@ function Header({ theme, setTheme }) {
               company?.image ? `http://localhost:3000${company.image}` : Logo
             }
             alt="Logo"
-            className="w-12 sm:w-32 h-auto object-contain"
+            className="w-12 sm:w-32 mt-2 h-auto object-contain rounded-xl"
           />
         </div>
         <nav className="w-full flex-1 mt-1">
