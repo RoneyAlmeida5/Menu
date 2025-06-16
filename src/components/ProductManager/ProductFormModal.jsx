@@ -48,9 +48,14 @@ const ProductFormModal = ({
         <div
           className={`${baseClass} p-6 rounded-lg shadow-md w-full max-w-4xl mx-auto`}
         >
-          <h2 className="text-xl font-semibold mb-8 text-center">
-            {productForm?.id ? "Editar Produto" : "Adicionar Produto"}
-          </h2>
+          <div className="flex grid justify-center items-center mb-8">
+            <h2 className="text-xl font-semibold text-center">
+              {productForm?.id ? "Editar Produto" : "Adicionar Produto"}
+            </h2>
+            <p className="flex justify-center items-center text-gray-500">
+              largura x altura [500x300]
+            </p>
+          </div>
 
           <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

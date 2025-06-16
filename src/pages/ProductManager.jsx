@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import EditSquareIcon from "@mui/icons-material/EditSquare";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Header from "./Header";
 import Logo from "../assets/Logo.png";
@@ -16,12 +17,14 @@ import BannerPromo from "../components/HomeComponents/BannerPromo";
 import CardProductsManager from "../components/ProductManager/CardProductsManager";
 import ProductFormModal from "../components/ProductManager/ProductFormModal";
 import MenuFormModal from "../components/ProductManager/MenuFormModal";
+import ImageUploadModal from "../components/ProductManager/ImageUploadModal";
 
 const ProductManager = ({ theme, setTheme }) => {
   const navigate = useNavigate();
   // MODAL
   const [openModalMenu, setOpenModalMenu] = useState(false);
   const [openModalProduct, setOpenModalProduct] = useState(false);
+  const [openModalImageModal, setOpenModalImageModal] = useState(false);
   // BANNER
   const [bannerFile, setBannerFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -331,82 +334,12 @@ const ProductManager = ({ theme, setTheme }) => {
         isSidebarOpen ? "ml-64" : "ml-0 sm:ml-20"
       } mt-4 ${backgroundClass} mb-9 rounded-2xl transition-all duration-300 h-full min-h-screen`}
     >
-      <div className="flex flex-row mb-4">
-        <div className="flex flex-col items-center space-y-6 max-w-sm mx-auto p-6 rounded-xl shadow-md">
-          <label className="text-lg font-semibold text-gray-100">
-            Alterar Logo da Empresa
-          </label>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleLogoChange}
-            className="cursor-pointer border border-gray-300 rounded-md p-2 w-full text-sm text-gray-400
-               file:mr-4 file:py-2 file:px-4
-               file:rounded-md file:border-0
-               file:text-sm file:font-semibold
-               file:bg-green-600 file:text-white
-               hover:file:bg-green-700
-               transition-colors duration-300"
-          />
-
-          {logoPreview && (
-            <img
-              src={logoPreview}
-              alt="Prévia da logo"
-              className="w-28 h-28 object-cover rounded-full border-4 border-green-600 shadow-lg"
-            />
-          )}
-
-          <button
-            onClick={handleUploadLogo}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md
-               transition-colors duration-300"
-          >
-            Enviar Logo
-          </button>
-        </div>
+      <div className="flex justify-center items-center">
         <img
           src={company?.image ? `http://localhost:3000${company.image}` : Logo}
           alt="Logo"
-          className="w-15 sm:w-28 mt-2 mb-1 h-auto object-contain rounded-xl"
+          className="flex justify-center items-center w-15 sm:w-20 mt-2 mb-1 h-auto object-contain rounded-xl"
         />
-        <div className="flex flex-col items-center space-y-6 max-w-md mx-auto p-5 rounded-xl shadow-md">
-          <label className="text-lg font-semibold text-gray-100">
-            Alterar Logo da Empresa
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="
-      cursor-pointer
-      border border-gray-300 rounded-md p-2 w-full text-sm text-gray-600
-      file:mr-4 file:py-2 file:px-4
-      file:rounded-md file:border-0
-      file:text-sm file:font-semibold
-      file:bg-blue-600 file:text-white
-      hover:file:bg-blue-700
-      transition-colors duration-300
-       "
-          />
-
-          {preview && (
-            <img
-              src={preview}
-              alt="Prévia"
-              className="w-full h-64 object-cover rounded-lg shadow-lg border border-gray-200"
-            />
-          )}
-
-          <button
-            onClick={handleUpload}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md
-       transition-colors duration-300"
-          >
-            Enviar Banner
-          </button>
-        </div>
       </div>
 
       <Header theme={theme} setTheme={setTheme} />
@@ -452,6 +385,14 @@ const ProductManager = ({ theme, setTheme }) => {
               <AddShoppingCartIcon />
             </button>
           </Tooltip>
+          <Tooltip title="Gerenciar Logo e Banner" placement="bottom">
+            <button
+              onClick={() => setOpenModalImageModal(true)}
+              className="mr-3 w-[50px] h-[50px] bg-blue-700 my-1 flex items-center justify-center rounded-xl cursor-pointer relative overflow-hidden transition-all duration-500 ease-in-out shadow-md hover:scale-105 hover:shadow-lg before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-[#244cde] before:to-[rgb(190, 190, 190)] before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0 text-white"
+            >
+              <EditSquareIcon />
+            </button>
+          </Tooltip>
           <Tooltip title="Sair" placement="bottom">
             <button
               onClick={handleLogout}
@@ -461,6 +402,27 @@ const ProductManager = ({ theme, setTheme }) => {
             </button>
           </Tooltip>
         </div>
+        <ImageUploadModal
+          isOpen={openModalImageModal}
+          onClose={() => setOpenModalImageModal(false)}
+          theme={theme}
+          logoFile={logoFile}
+          setLogoFile={setLogoFile}
+          logoPreview={logoPreview}
+          setLogoPreview={setLogoPreview}
+          handleLogoChange={handleLogoChange}
+          handleUploadLogo={handleUploadLogo}
+          bannerFile={bannerFile}
+          setBannerFile={setBannerFile}
+          preview={preview}
+          setPreview={setPreview}
+          handleFileChange={handleFileChange}
+          handleUpload={handleUpload}
+          openModalImageModal={openModalImageModal}
+          setOpenModalImageModal={setOpenModalImageModal}
+          company={company}
+        />
+
         <ProductFormModal
           productForm={productForm}
           setProductForm={setProductForm}
