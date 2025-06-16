@@ -22,7 +22,7 @@ const CardProductsManager = ({ item, onEdit, onDelete, theme }) => {
       <img
         src={`http://localhost:3000${item.image}`}
         alt={item.name}
-        className="w-full h-auto max-h-50 object-contain rounded-md mb-2"
+        className="w-full h-60 object-cover rounded-md mb-2"
       />
 
       <div className="mt-auto flex justify-end-safe space-x-2">

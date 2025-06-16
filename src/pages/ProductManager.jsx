@@ -18,15 +18,19 @@ import ProductFormModal from "../components/ProductManager/ProductFormModal";
 import MenuFormModal from "../components/ProductManager/MenuFormModal";
 
 const ProductManager = ({ theme, setTheme }) => {
+  const navigate = useNavigate();
+  // MODAL
   const [openModalMenu, setOpenModalMenu] = useState(false);
   const [openModalProduct, setOpenModalProduct] = useState(false);
-  const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [company, setCompany] = useState();
   // BANNER
   const [bannerFile, setBannerFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploadedPath, setUploadedPath] = useState("");
+  // LOGO
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [company, setCompany] = useState();
+  const [selectedImage, setSelectedImage] = useState(null);
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts();
   const { isSidebarOpen, selectedMenu, searchTerm, updateSearchTerm } =
@@ -79,7 +83,6 @@ const ProductManager = ({ theme, setTheme }) => {
     setBannerFile(file);
     setPreview(URL.createObjectURL(file));
   };
-
   const handleUpload = async () => {
     if (!bannerFile) return;
 
@@ -104,6 +107,39 @@ const ProductManager = ({ theme, setTheme }) => {
     } catch (err) {
       console.error(err);
       alert("Erro ao enviar banner.");
+    }
+  };
+
+  // LOGO COMPANY
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    setLogoFile(file);
+    setLogoPreview(URL.createObjectURL(file));
+  };
+  const handleUploadLogo = async () => {
+    if (!logoFile) return;
+
+    const formData = new FormData();
+    formData.append("image", logoFile);
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.put(
+        "http://localhost:3000/companies/logo",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      alert("Logo enviada com sucesso!");
+      setCompany((prev) => ({ ...prev, image: response.data.path }));
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao enviar logo.");
     }
   };
 
@@ -295,13 +331,84 @@ const ProductManager = ({ theme, setTheme }) => {
         isSidebarOpen ? "ml-64" : "ml-0 sm:ml-20"
       } mt-4 ${backgroundClass} mb-9 rounded-2xl transition-all duration-300 h-full min-h-screen`}
     >
-      <div className="flex items-center justify-center">
+      <div className="flex flex-row mb-4">
+        <div className="flex flex-col items-center space-y-6 max-w-sm mx-auto p-6 rounded-xl shadow-md">
+          <label className="text-lg font-semibold text-gray-100">
+            Alterar Logo da Empresa
+          </label>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleLogoChange}
+            className="cursor-pointer border border-gray-300 rounded-md p-2 w-full text-sm text-gray-400
+               file:mr-4 file:py-2 file:px-4
+               file:rounded-md file:border-0
+               file:text-sm file:font-semibold
+               file:bg-green-600 file:text-white
+               hover:file:bg-green-700
+               transition-colors duration-300"
+          />
+
+          {logoPreview && (
+            <img
+              src={logoPreview}
+              alt="Prévia da logo"
+              className="w-28 h-28 object-cover rounded-full border-4 border-green-600 shadow-lg"
+            />
+          )}
+
+          <button
+            onClick={handleUploadLogo}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md
+               transition-colors duration-300"
+          >
+            Enviar Logo
+          </button>
+        </div>
         <img
           src={company?.image ? `http://localhost:3000${company.image}` : Logo}
           alt="Logo"
-          className="w-12 sm:w-16 mt-2 mb-1 h-auto object-contain rounded-xl"
+          className="w-15 sm:w-28 mt-2 mb-1 h-auto object-contain rounded-xl"
         />
+        <div className="flex flex-col items-center space-y-6 max-w-md mx-auto p-5 rounded-xl shadow-md">
+          <label className="text-lg font-semibold text-gray-100">
+            Alterar Logo da Empresa
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="
+      cursor-pointer
+      border border-gray-300 rounded-md p-2 w-full text-sm text-gray-600
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-md file:border-0
+      file:text-sm file:font-semibold
+      file:bg-blue-600 file:text-white
+      hover:file:bg-blue-700
+      transition-colors duration-300
+       "
+          />
+
+          {preview && (
+            <img
+              src={preview}
+              alt="Prévia"
+              className="w-full h-64 object-cover rounded-lg shadow-lg border border-gray-200"
+            />
+          )}
+
+          <button
+            onClick={handleUpload}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md
+       transition-colors duration-300"
+          >
+            Enviar Banner
+          </button>
+        </div>
       </div>
+
       <Header theme={theme} setTheme={setTheme} />
 
       <div className="overflow-y-auto px-4 sm:px-6 pb-6">
@@ -309,22 +416,6 @@ const ProductManager = ({ theme, setTheme }) => {
           <SearchBar onSearch={handleSearch} theme={theme} />
         </div>
 
-        <div className="space-y-4">
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-          {preview && (
-            <img
-              src={preview}
-              alt="Prévia"
-              className="w-full h-64 object-cover rounded-lg"
-            />
-          )}
-          <button
-            onClick={handleUpload}
-            className="bg-blue-600 text-white py-2 px-4 rounded-lg cursor-pointer"
-          >
-            Enviar Banner
-          </button>
-        </div>
         <BannerPromo company={company} />
 
         <div className="flex items-center justify-center">
