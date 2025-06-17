@@ -113,10 +113,8 @@ const ProductManager = ({ theme, setTheme }) => {
         }
       );
       setUploadedPath(response.data.path);
-      alert("Banner enviado com sucesso!");
     } catch (err) {
       console.error(err);
-      alert("Erro ao enviar banner.");
     }
   };
 
@@ -145,11 +143,9 @@ const ProductManager = ({ theme, setTheme }) => {
           },
         }
       );
-      alert("Logo enviada com sucesso!");
       setCompany((prev) => ({ ...prev, image: response.data.path }));
     } catch (err) {
       console.error(err);
-      alert("Erro ao enviar logo.");
     }
   };
 

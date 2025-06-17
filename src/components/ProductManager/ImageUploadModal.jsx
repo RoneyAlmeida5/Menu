@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal } from "@mui/material";
+import toast from "react-hot-toast";
 
 const ImageUploadModal = ({
   isOpen,
@@ -22,6 +23,30 @@ const ImageUploadModal = ({
   const labelClass = theme === "dark" ? "text-gray-100" : "text-gray-800";
 
   const handleClose = () => setOpenModalImageModal(false);
+
+  const handleUploadLogoWithToast = async () => {
+    try {
+      await toast.promise(handleUploadLogo(), {
+        loading: "Enviando nova logo...",
+        success: <p>Logo enviada com sucesso!</p>,
+        error: <p>Erro ao enviar a logo.</p>,
+      });
+    } catch (error) {
+      console.error("Erro no upload da logo:", error);
+    }
+  };
+
+  const handleUploadBannerWithToast = async () => {
+    try {
+      await toast.promise(handleUpload(), {
+        loading: "Enviando novo banner...",
+        success: <p>Banner enviado com sucesso!</p>,
+        error: <p>Erro ao enviar o banner.</p>,
+      });
+    } catch (error) {
+      console.error("Erro no upload do banner:", error);
+    }
+  };
 
   return (
     <Modal open={openModalImageModal} onClose={handleClose}>
@@ -57,12 +82,12 @@ const ImageUploadModal = ({
                 accept="image/*"
                 onChange={handleLogoChange}
                 className="cursor-pointer border border-gray-300 rounded-md p-2 w-full text-sm text-gray-400
-                 file:mr-4 file:py-2 file:px-4
-                 file:rounded-md file:border-0
-                 file:text-sm file:font-semibold
-                 file:bg-green-600 file:text-white
-                 hover:file:bg-green-700
-                 transition-colors duration-300"
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-green-600 file:text-white
+                  hover:file:bg-green-700
+                  transition-colors duration-300"
               />
 
               {logoPreview ? (
@@ -82,9 +107,9 @@ const ImageUploadModal = ({
               )}
 
               <button
-                onClick={handleUploadLogo}
+                onClick={handleUploadLogoWithToast}
                 className="w-full bg-green-600 cursor-pointer hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md
-                 transition-colors duration-300"
+                  transition-colors duration-300"
               >
                 Enviar Nova Logo
               </button>
@@ -129,9 +154,9 @@ const ImageUploadModal = ({
               )}
 
               <button
-                onClick={handleUpload}
+                onClick={handleUploadBannerWithToast}
                 className="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md
-                 transition-colors duration-300"
+                  transition-colors duration-300"
               >
                 Enviar Novo Banner
               </button>
