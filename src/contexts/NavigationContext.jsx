@@ -11,6 +11,7 @@ export const NavigationProvider = ({ children }) => {
     id: null,
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [refreshMenus, setRefreshMenus] = useState(false);
 
   const toggleSidebar = (isOpen) => {
     setIsSidebarOpen(isOpen);
@@ -24,6 +25,10 @@ export const NavigationProvider = ({ children }) => {
     setSearchTerm(term);
   };
 
+  const triggerMenuRefresh = () => {
+    setRefreshMenus((prev) => !prev);
+  };
+
   return (
     <NavigationContext.Provider
       value={{
@@ -33,6 +38,8 @@ export const NavigationProvider = ({ children }) => {
         updateSelectedTitle,
         searchTerm,
         updateSearchTerm,
+        refreshMenus,
+        triggerMenuRefresh,
       }}
     >
       {children}

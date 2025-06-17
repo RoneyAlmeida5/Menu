@@ -7,6 +7,7 @@ import { IoClose } from "react-icons/io5";
 import { IconButton } from "@mui/material";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
+import toast from "react-hot-toast";
 import axios from "axios";
 
 function Header({ theme, setTheme }) {
@@ -14,8 +15,13 @@ function Header({ theme, setTheme }) {
   const [showText, setShowText] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isSidebarOpen, toggleSidebar, updateSelectedTitle, selectedMenu } =
-    useNavigation();
+  const {
+    isSidebarOpen,
+    toggleSidebar,
+    updateSelectedTitle,
+    selectedMenu,
+    refreshMenus,
+  } = useNavigation();
   const [menuItems, setMenuItems] = useState([]);
   const [company, setCompany] = useState(null);
 
@@ -70,18 +76,32 @@ function Header({ theme, setTheme }) {
   };
   useEffect(() => {
     fetchMenus();
-  }, []);
+  }, [refreshMenus]);
   const handleDeleteMenu = async (menu) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/menu/${menu.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchMenus();
-      console.log("Menu deletado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao deletar menu:", error);
-    }
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        try {
+          const token = localStorage.getItem("token");
+          await axios.delete(`http://localhost:3000/menu/${menu.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          fetchMenus();
+          if (selectedMenu.id === menu.id) {
+            updateSelectedTitle({ name: "Menu Completo", id: null });
+          }
+          console.log("Menu deletado com sucesso!");
+          resolve();
+        } catch (error) {
+          console.error("Erro ao deletar menu:", error);
+          reject(error);
+        }
+      }),
+      {
+        loading: "Deletando menu...",
+        success: "Menu deletado com sucesso!",
+        error: "Erro ao deletar menu. Tente novamente.",
+      }
+    );
   };
 
   // EFFECT PARA MOBILE & WEB
@@ -263,14 +283,5 @@ function Header({ theme, setTheme }) {
     </>
   );
 }
-export const categories = [
-  "Bolos",
-  "Hamburger",
-  "Acompanhamentos",
-  "Entradas",
-  "Batatas",
-  "Frangos",
-  "Bebidas",
-];
 
 export default Header;

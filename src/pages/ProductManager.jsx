@@ -10,6 +10,8 @@ import SearchBar from "../components/HeaderSearchComponents/SearchBar";
 
 // IMPORTS
 import axios from "axios";
+import toast from "react-hot-toast";
+import LoadingModals from "../components/ProductManager/LoadingModals";
 import { useProducts } from "../contexts/ProductsContext";
 import { useNavigation } from "../contexts/NavigationContext";
 import { useNavigate } from "react-router";
@@ -36,8 +38,13 @@ const ProductManager = ({ theme, setTheme }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts();
-  const { isSidebarOpen, selectedMenu, searchTerm, updateSearchTerm } =
-    useNavigation();
+  const {
+    isSidebarOpen,
+    selectedMenu,
+    searchTerm,
+    updateSearchTerm,
+    triggerMenuRefresh,
+  } = useNavigation();
   const handleSearch = (term) => updateSearchTerm(term);
 
   // EFFECT PARA REQ DA IMAGE
@@ -152,48 +159,74 @@ const ProductManager = ({ theme, setTheme }) => {
     name: "",
   });
   const addMenu = async (menu) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:3000/menu",
-        { ...menu, companyId: company.id },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.post(
+            "http://localhost:3000/menu",
+            { ...menu, companyId: company.id },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          triggerMenuRefresh();
+          resolve();
+        } catch (error) {
+          console.error("Erro ao adicionar menu:", error);
+          reject(error);
         }
-      );
-      console.log("Menu adicionado:", response.data);
-    } catch (error) {
-      console.error("Erro ao adicionar menu:", error);
-    }
+      }),
+      {
+        loading: <LoadingModals />,
+        success: "Menu adicionado com sucesso!",
+        error: "Erro ao adicionar menu. Tente novamente.",
+      }
+    );
   };
-  const handleSaveMenu = () => {
-    if (!menuForm.name) return;
+  const handleSaveMenu = async () => {
+    if (!menuForm.name) {
+      toast.error("Por favor, insira o nome do menu.");
+      return;
+    }
 
     if (menuForm.id) {
-      updateMenu(menuForm);
+      await updateMenu(menuForm);
     } else {
-      addMenu(menuForm);
+      await addMenu(menuForm);
     }
 
+    setOpenModalMenu(false);
     setMenuForm({
       id: null,
       name: "",
     });
   };
   const updateMenu = async (menu) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.put(
-        `http://localhost:3000/menu/${menu.id}`,
-        { ...menu },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.put(
+            `http://localhost:3000/menu/${menu.id}`,
+            { ...menu },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          triggerMenuRefresh();
+          resolve();
+        } catch (error) {
+          console.error("Erro ao atualizar menu:", error);
+          reject(error);
         }
-      );
-      console.log("Menu atualizado:", response.data);
-    } catch (error) {
-      console.error("Erro ao atualizar menu:", error);
-    }
+      }),
+      {
+        loading: <LoadingModals />,
+        success: "Menu atualizado com sucesso!",
+        error: "Erro ao atualizar menu. Tente novamente.",
+      }
+    );
   };
 
   // LOGICA PARA PRODUTOS ADD/EDIT/DELET)
@@ -308,16 +341,26 @@ const ProductManager = ({ theme, setTheme }) => {
     setOpenModalProduct(true);
   };
   const handleDeleteProduct = async (product) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/product/${product.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchProducts();
-      console.log("Produto deletado");
-    } catch (error) {
-      console.error("Erro ao deletar produto:", error);
-    }
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        try {
+          const token = localStorage.getItem("token");
+          await axios.delete(`http://localhost:3000/product/${product.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          fetchProducts();
+          resolve();
+        } catch (error) {
+          console.error("Erro ao deletar produto:", error);
+          reject(error);
+        }
+      }),
+      {
+        loading: "Excluindo produto...",
+        success: "Produto excluído com sucesso!",
+        error: "Erro ao excluir produto. Tente novamente.",
+      }
+    );
   };
 
   const handleLogout = () => {
@@ -446,7 +489,7 @@ const ProductManager = ({ theme, setTheme }) => {
           {searchTerm ? `Pesquisa: ${searchTerm}` : selectedMenu?.name}
         </h2>
 
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredItems.map((item) => (
             <CardProductsManager
               key={item.id}
