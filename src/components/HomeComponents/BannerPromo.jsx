@@ -12,7 +12,7 @@ const BannerPromo = ({ company }) => {
       <img
         src={bannerUrl}
         alt="Banner de promoção"
-        className="rounded-lg w-full h-70 object-cover"
+        className="rounded-lg w-full h-full object-cover"
       />
     </div>
   );

@@ -122,7 +122,7 @@ const ImageUploadModal = ({
                   Alterar Banner da Empresa
                 </label>
                 <p className="flex justify-center items-center text-gray-500">
-                  largura x altura [1200x300]
+                  largura x altura [1200x200]
                 </p>
               </div>
               <input
