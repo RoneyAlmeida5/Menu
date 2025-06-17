@@ -6,30 +6,38 @@ import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 const CardProducts = ({ item, handleOpen, theme }) => {
   const backgroundClass =
     theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black";
-  const priceColorClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
+  const priceColorClass = theme === "dark" ? "text-blue-400" : "text-blue-600";
 
   return (
     <div
       className={`${backgroundClass} p-4 rounded-lg shadow-md hover:scale-105 transition-transform`}
     >
       <img
-        src={item.img}
-        alt={item.title}
-        className="w-full h-32 object-cover rounded-md mb-2"
+        src={`http://localhost:3000${item.image}`}
+        alt={item.name}
+        className="w-full h-60 object-cover rounded-md mb-2"
       />
-      <h3 className="text-lg font-semibold">{item.title}</h3>
-      <p className={`${priceColorClass}`}>R$ {item.price}</p>
-      <div className="mt-4 flex justify-end space-x-2">
-        <Tooltip title="Descrição" arrow>
-          <IconButton onClick={() => handleOpen(item, "desc")} color="inherit">
-            <DescriptionRoundedIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Adicionar ao carrinho" arrow>
-          <IconButton onClick={() => handleOpen(item, "add")} color="inherit">
-            <AddCircleRoundedIcon />
-          </IconButton>
-        </Tooltip>
+      <div className="mt-auto flex justify-end-safe space-x-2">
+        <div className="mt-auto w-full flex flex-col items-start space-y-1">
+          <h3 className="text-lg font-semibold">{item.name}</h3>
+          <p className="text-sm mt-1 text-gray-400">{item.description}</p>{" "}
+          <p className={`${priceColorClass}`}>R$ {item.value}</p>
+        </div>
+        <div className="mt-auto flex justify-end space-x-2">
+          <Tooltip title="Descrição" arrow>
+            <IconButton
+              onClick={() => handleOpen(item, "desc")}
+              color="inherit"
+            >
+              <DescriptionRoundedIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Adicionar ao carrinho" arrow>
+            <IconButton onClick={() => handleOpen(item, "add")} color="inherit">
+              <AddCircleRoundedIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
       </div>
     </div>
   );
