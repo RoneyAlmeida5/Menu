@@ -7,6 +7,7 @@ import { IoClose } from "react-icons/io5";
 import { IconButton } from "@mui/material";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
+import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -24,6 +25,8 @@ function Header({ theme, setTheme }) {
   } = useNavigation();
   const [menuItems, setMenuItems] = useState([]);
   const [company, setCompany] = useState(null);
+  const location = useLocation();
+  const isConsumerPage = location.pathname === "/consumers";
 
   // EFFECT PARA REQ IMG COMPANY
   useEffect(() => {
@@ -204,7 +207,7 @@ function Header({ theme, setTheme }) {
               >
                 {item.icon}
                 <span>{item.name}</span>
-                {item.id !== null && (
+                {item.id !== null && !isConsumerPage && (
                   <div className="ml-auto">
                     <IconButton
                       onClick={() => handleDeleteMenu(item)}
@@ -258,7 +261,7 @@ function Header({ theme, setTheme }) {
               >
                 {item.icon}
                 {showText && <span>{item.name}</span>}
-                {showText && item.id !== null && (
+                {showText && item.id !== null && !isConsumerPage && (
                   <div className="ml-auto">
                     <IconButton
                       size="small"
