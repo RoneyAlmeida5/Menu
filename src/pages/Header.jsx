@@ -140,19 +140,23 @@ function Header({ theme, setTheme }) {
           ${baseClass}
         `}
       >
-        <button
-          onClick={toggleMobileMenu}
-          className="absolute left-4 text-2xl focus:outline-none"
-        >
-          {mobileMenuOpen ? <IoClose className="h-7 w-7 mb-28" /> : <HiMenu />}
-        </button>
         <div className="flex items-center justify-center">
+          <button
+            onClick={toggleMobileMenu}
+            className="absolute left-4 text-2xl focus:outline-none"
+          >
+            {mobileMenuOpen ? (
+              <IoClose className="relative h-7 w-7" />
+            ) : (
+              <HiMenu />
+            )}
+          </button>
           <img
             src={
               company?.image ? `http://localhost:3000${company.image}` : Logo
             }
             alt="Logo"
-            className="w-15 mr-2 rounded-xl mt-2 object-contain"
+            className="w-15 mr-4 rounded-xl mt-2 object-contain"
           />
         </div>
         {!mobileMenuOpen && (
