@@ -1,11 +1,11 @@
 import React from "react";
-import Banner from "../../assets/bannercard.jpg";
+import ErrorBanner from "../../assets/errorbanner.png";
 
 const BannerPromo = ({ company }) => {
   const bannerUrl =
     company && company.banner
       ? `http://localhost:3000${company.banner}`
-      : Banner;
+      : ErrorBanner;
 
   return (
     <div className="mb-6">
