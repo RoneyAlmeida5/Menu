@@ -17,7 +17,14 @@ export const sendWhatsAppOrder = ({
   if (!cartItems || cartItems.length === 0) return;
 
   const itemsMessage = cartItems
-    .map((item) => `➡ ${item.quantity}x ${item.name}`)
+    .map(
+      (item) =>
+        `➡ ${item.quantity}x ${item.name} (R$ ${(
+          Number(item?.value || 0) * item.quantity
+        )
+          .toFixed(2)
+          .replace(".", ",")})`
+    )
     .join("\n");
 
   const formattedDate = deliveryDate.format("DD/MM/YYYY");
@@ -38,7 +45,9 @@ ${deliveryIcon} Delivery (taxa de: R$ ${deliveryFee
 
 📅 Data de entrega: ${formattedDate}
 
-Total: R$ ${totalPrice.toFixed(2).replace(".", ",")}
+Total: R$ ${(parseFloat(totalPrice) + parseFloat(deliveryFee))
+    .toFixed(2)
+    .replace(".", ",")}
 
 Obrigado pela preferência, se precisar de algo é só chamar! 😉
   `;
