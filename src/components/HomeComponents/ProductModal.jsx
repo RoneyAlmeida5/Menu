@@ -18,7 +18,7 @@ const ProductModal = ({
   const buttonClass =
     theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-700 text-gray-100";
   const borderClass = theme === "dark" ? "border-gray-500" : "border-gray-300";
-  const textModal = theme === "dark" ? "text-gray-200" : "text-gray-900";
+  const textModal = theme === "dark" ? "text-gray-300" : "text-gray-900";
   const textValue = theme === "dark" ? "text-gray-400" : "text-gray-500";
 
   return (
@@ -43,10 +43,10 @@ const ProductModal = ({
         {mode === "desc" ? "Descrição do Produto" : "Adicionar ao Carrinho"}
       </DialogTitle>
       <DialogContent dividers className="space-y-4">
-        {item?.img && (
+        {item?.image && (
           <img
-            src={item.img}
-            alt={item.title}
+            src={`http://localhost:3000${item.image}`}
+            alt={item.name}
             className="w-full h-auto max-h-48 object-cover rounded-lg mb-4"
           />
         )}
@@ -55,12 +55,17 @@ const ProductModal = ({
         ) : (
           <>
             <Typography className={textModal}>
-              Deseja adicionar <strong>{item?.title}</strong> ao carrinho?
+              Deseja adicionar{" "}
+              <strong className="text-green-500">{item?.name}</strong> ao
+              carrinho?
             </Typography>
-            <Typography
-              className={`${textValue} text-center pt-3 text-lg font-semibold`}
-            >
-              R$ {item?.price}
+            <Typography className={`${textValue} text-center pt-3 text-lg `}>
+              <p className="text-blue-400">
+                R${" "}
+                {(Number(item?.value || 0) * quantity)
+                  .toFixed(2)
+                  .replace(".", ",")}
+              </p>
             </Typography>
             <div className="flex items-center justify-center gap-4 mt-6">
               <button

@@ -2,11 +2,24 @@ import React from "react";
 import { IconButton, Tooltip } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import { useCart } from "../../contexts/CartContext";
 
 const CardProducts = ({ item, handleOpen, theme }) => {
+  const { addToCart } = useCart();
   const backgroundClass =
     theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black";
   const priceColorClass = theme === "dark" ? "text-blue-400" : "text-blue-600";
+
+  const handleAddToCart = () => {
+    const productToAdd = {
+      id: item.id,
+      title: item.name,
+      price: `R$ ${item.value}`,
+      image: item.image,
+      quantity: 1,
+    };
+    addToCart(productToAdd);
+  };
 
   return (
     <div

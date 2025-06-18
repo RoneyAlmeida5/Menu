@@ -5,6 +5,24 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
+  const incrementQuantity = (id) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  const decrementQuantity = (id) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id
+          ? { ...item, quantity: Math.max(1, item.quantity - 1) }
+          : item
+      )
+    );
+  };
+
   const addToCart = (item, quantity = 1) => {
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
@@ -27,7 +45,15 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, clearCart, totalQuantity }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        totalQuantity,
+        incrementQuantity,
+        decrementQuantity,
+      }}
     >
       {children}
     </CartContext.Provider>

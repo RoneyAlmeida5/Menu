@@ -20,12 +20,21 @@ import BannerCard from "../../assets/bannercard.jpeg";
 
 const CartModal = ({ open, onClose, theme }) => {
   const datepickerRef = useRef(null);
-  const { cartItems, removeFromCart, totalQuantity } = useCart();
+  const {
+    cartItems,
+    removeFromCart,
+    totalQuantity,
+    incrementQuantity,
+    decrementQuantity,
+  } = useCart();
   const [deliveryDate, setDeliveryDate] = useState(dayjs());
   const [selectedValue, setSelectedValue] = useState("Cartão");
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-  const textMutedClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
+  const textMutedClass =
+    theme === "dark"
+      ? "text-gray-300 font-semibold"
+      : "text-gray-600 font-semibold";
   const borderClass = theme === "dark" ? "border-gray-600" : "border-gray-300";
   const buttonTextClass = theme === "dark" ? "text-white" : "text-black";
 
@@ -35,7 +44,7 @@ const CartModal = ({ open, onClose, theme }) => {
 
   const totalPrice = cartItems.reduce((acc, item) => {
     const priceNumber = parseFloat(
-      item.price.replace("R$", "").replace(",", ".")
+      item.value.replace("R$", "").replace(",", ".")
     );
     return acc + priceNumber * item.quantity;
   }, 0);
@@ -127,13 +136,30 @@ const CartModal = ({ open, onClose, theme }) => {
               className={`flex justify-between items-center border-b py-2 ${borderClass}`}
             >
               <div className="flex flex-col mr-6">
-                <img src={BannerCard} className="w-25 h-10" />
+                <img
+                  src={`http://localhost:3000${item.image}`}
+                  className="w-25 h-10"
+                />
                 <span className={`text-lg font-semibold ${buttonTextClass}`}>
-                  {item.title}
+                  {item.name}
                 </span>
-                <span className={`text-sm ${textMutedClass}`}>
-                  Qtd: {item.quantity}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => decrementQuantity(item.id)}
+                    className="w-6 h-6 flex items-center justify-center bg-red-400 text-black rounded hover:scale-95"
+                  >
+                    -
+                  </button>
+                  <span className={`text-sm ${textMutedClass}`}>
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => incrementQuantity(item.id)}
+                    className="w-6 h-6 flex items-center justify-center bg-green-400 text-black rounded hover:scale-95"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
               <Button
                 variant="outlined"

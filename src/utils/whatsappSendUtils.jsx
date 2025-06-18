@@ -3,7 +3,7 @@ export const sendWhatsAppOrder = ({
   totalPrice,
   deliveryDate,
   phone = "5521964895107",
-  orderNumber = 31,
+  orderNumber = Math.floor(Math.random() * 101),
   paymentMethodIcon = "💳",
   paymentMethodName = "Cartão",
   deliveryIcon = "🛵",
@@ -17,30 +17,30 @@ export const sendWhatsAppOrder = ({
   if (!cartItems || cartItems.length === 0) return;
 
   const itemsMessage = cartItems
-    .map((item) => `➡ ${item.quantity}x ${item.title}`)
+    .map((item) => `➡ ${item.quantity}x ${item.name}`)
     .join("\n");
 
   const formattedDate = deliveryDate.format("DD/MM/YYYY");
 
   const finalMessage = `Pedido nº ${orderNumber}
     
-  Itens:
-  ${itemsMessage}
+Itens:
+${itemsMessage}
 
-  ${paymentMethodIcon} ${paymentMethodName}
+${paymentMethodIcon} ${paymentMethodName}
 
-  ${deliveryIcon} Delivery (taxa de: R$ ${deliveryFee
+${deliveryIcon} Delivery (taxa de: R$ ${deliveryFee
     .toFixed(2)
     .replace(".", ",")})
-  🏠 ${address.address}, Nº ${address.houseNumber}${
+🏠 ${address.address}, Nº ${address.houseNumber}${
     address.complement ? `, ${address.complement}` : ""
   }
 
-  📅 Data de entrega: ${formattedDate}
+📅 Data de entrega: ${formattedDate}
 
-  Total: R$ ${totalPrice.toFixed(2).replace(".", ",")}
+Total: R$ ${totalPrice.toFixed(2).replace(".", ",")}
 
-  Obrigado pela preferência, se precisar de algo é só chamar! 😉
+Obrigado pela preferência, se precisar de algo é só chamar! 😉
   `;
 
   const encodedMessage = encodeURIComponent(finalMessage);
