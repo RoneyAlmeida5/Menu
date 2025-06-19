@@ -8,6 +8,19 @@ import Header from "./Header";
 import Logo from "../assets/Logo.png";
 import SearchBar from "../components/HeaderSearchComponents/SearchBar";
 
+// API
+import {
+  fetchCompany,
+  fetchProducts as fetchProductsFromApi,
+  uploadBanner,
+  uploadLogo,
+  createMenu,
+  updateMenu as apiUpdateMenu,
+  createProduct,
+  updateProduct as apiUpdateProduct,
+  deleteProduct as apiDeleteProduct,
+} from "../services/api";
+
 // IMPORTS
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -36,8 +49,7 @@ const ProductManager = ({ theme, setTheme }) => {
   const [logoPreview, setLogoPreview] = useState(null);
   const [company, setCompany] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
-  const { products, setProducts, addProduct, updateProduct, deleteProduct } =
-    useProducts();
+  const { products, setProducts } = useProducts();
   const {
     isSidebarOpen,
     selectedMenu,
@@ -49,43 +61,32 @@ const ProductManager = ({ theme, setTheme }) => {
 
   // EFFECT PARA REQ DA IMAGE
   useEffect(() => {
-    const fetchCompany = async () => {
+    const loadCompany = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/companies/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setCompany(response.data);
+        const data = await fetchCompany();
+        setCompany(data);
       } catch (error) {
         console.error("Erro ao buscar dados da empresa:", error);
       }
     };
-
-    fetchCompany();
+    loadCompany();
   }, []);
 
   // EFFECT PARA REQ DE PRODUTOS
   const fetchProducts = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      const params = {};
-      if (selectedMenu.name !== "Menu Completo") {
-        params.menuId = selectedMenu.id;
-      }
-
-      const res = await axios.get("http://localhost:3000/product", {
-        headers: { Authorization: `Bearer ${token}` },
-        params,
-      });
-
-      setProducts(res.data);
+      const menuId =
+        selectedMenu?.name !== "Menu Completo" ? selectedMenu?.id : null;
+      const data = await fetchProductsFromApi(menuId);
+      setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Erro ao buscar produtos:", err);
+      setProducts([]); // fallback para não quebrar o .filter
     }
   };
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedMenu]);
 
   // BANNER PROMO
   const handleFileChange = (e) => {
@@ -95,24 +96,11 @@ const ProductManager = ({ theme, setTheme }) => {
   };
   const handleUpload = async () => {
     if (!bannerFile) return;
-
     const formData = new FormData();
     formData.append("banner", bannerFile);
-
-    const token = localStorage.getItem("token");
-
     try {
-      const response = await axios.post(
-        "http://localhost:3000/companies/banner",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setUploadedPath(response.data.path);
+      const result = await uploadBanner(formData);
+      setUploadedPath(result.path);
     } catch (err) {
       console.error(err);
     }
@@ -126,24 +114,11 @@ const ProductManager = ({ theme, setTheme }) => {
   };
   const handleUploadLogo = async () => {
     if (!logoFile) return;
-
     const formData = new FormData();
     formData.append("image", logoFile);
-
-    const token = localStorage.getItem("token");
-
     try {
-      const response = await axios.put(
-        "http://localhost:3000/companies/logo",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setCompany((prev) => ({ ...prev, image: response.data.path }));
+      const result = await uploadLogo(formData);
+      setCompany((prev) => ({ ...prev, image: result.path }));
     } catch (err) {
       console.error(err);
     }
@@ -156,23 +131,7 @@ const ProductManager = ({ theme, setTheme }) => {
   });
   const addMenu = async (menu) => {
     await toast.promise(
-      new Promise(async (resolve, reject) => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await axios.post(
-            "http://localhost:3000/menu",
-            { ...menu, companyId: company.id },
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          triggerMenuRefresh();
-          resolve();
-        } catch (error) {
-          console.error("Erro ao adicionar menu:", error);
-          reject(error);
-        }
-      }),
+      createMenu({ ...menu, companyId: company.id }).then(triggerMenuRefresh),
       {
         loading: <LoadingModals />,
         success: "Menu adicionado com sucesso!",
@@ -181,48 +140,21 @@ const ProductManager = ({ theme, setTheme }) => {
     );
   };
   const handleSaveMenu = async () => {
-    if (!menuForm.name) {
-      toast.error("Por favor, insira o nome do menu.");
-      return;
-    }
-
+    if (!menuForm.name) return toast.error("Insira o nome do menu.");
     if (menuForm.id) {
       await updateMenu(menuForm);
     } else {
       await addMenu(menuForm);
     }
-
     setOpenModalMenu(false);
-    setMenuForm({
-      id: null,
-      name: "",
-    });
+    setMenuForm({ id: null, name: "" });
   };
   const updateMenu = async (menu) => {
-    await toast.promise(
-      new Promise(async (resolve, reject) => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await axios.put(
-            `http://localhost:3000/menu/${menu.id}`,
-            { ...menu },
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          triggerMenuRefresh();
-          resolve();
-        } catch (error) {
-          console.error("Erro ao atualizar menu:", error);
-          reject(error);
-        }
-      }),
-      {
-        loading: <LoadingModals />,
-        success: "Menu atualizado com sucesso!",
-        error: "Erro ao atualizar menu. Tente novamente.",
-      }
-    );
+    await toast.promise(apiUpdateMenu(menu.id, menu).then(triggerMenuRefresh), {
+      loading: <LoadingModals />,
+      success: "Menu atualizado com sucesso!",
+      error: "Erro ao atualizar menu. Tente novamente.",
+    });
   };
 
   // LOGICA PARA PRODUTOS ADD/EDIT/DELET)
@@ -234,9 +166,6 @@ const ProductManager = ({ theme, setTheme }) => {
     description: "",
     menuIds: [],
   });
-  useEffect(() => {
-    fetchProducts();
-  }, [selectedMenu]);
   const filteredItems = products.filter((item) => {
     const title = item?.name || "";
 
@@ -259,52 +188,26 @@ const ProductManager = ({ theme, setTheme }) => {
       alert("Preencha nome e preço.");
       return;
     }
-
     const formData = new FormData();
     formData.append("name", productForm.name);
     formData.append("value", productForm.value);
     formData.append("description", productForm.description);
     formData.append("companyId", company.id);
-
-    const transformMenuIdsinAny = productForm.menuIds;
-    const menuIdsArray = Array.isArray(transformMenuIdsinAny)
-      ? transformMenuIdsinAny
-      : typeof transformMenuIdsinAny === "number"
-      ? [transformMenuIdsinAny]
+    const menuIdsArray = Array.isArray(productForm.menuIds)
+      ? productForm.menuIds
+      : typeof productForm.menuIds === "number"
+      ? [productForm.menuIds]
       : [];
-
     formData.append("menuIds", JSON.stringify(menuIdsArray));
-
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
-
-    const token = localStorage.getItem("token");
-    console.log("Enviando dados:", productForm);
-
     try {
       if (productForm.id) {
-        // EDIÇÃO (PUT)
-        await axios.put(
-          `http://localhost:3000/product/${productForm.id}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        await apiUpdateProduct(productForm.id, formData);
       } else {
-        // CRIAÇÃO (POST)
-        await axios.post("http://localhost:3000/product", formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await createProduct(formData);
       }
-
       fetchProducts();
       setOpenModalProduct(false);
       setProductForm({
@@ -317,10 +220,7 @@ const ProductManager = ({ theme, setTheme }) => {
       });
       setSelectedImage(null);
     } catch (error) {
-      console.error(
-        "Erro ao salvar produto com imagem:",
-        error.response?.data || error.message
-      );
+      console.error("Erro ao salvar produto com imagem:", error);
     }
   };
   const handleEditProduct = (product) => {
@@ -337,26 +237,11 @@ const ProductManager = ({ theme, setTheme }) => {
     setOpenModalProduct(true);
   };
   const handleDeleteProduct = async (product) => {
-    await toast.promise(
-      new Promise(async (resolve, reject) => {
-        try {
-          const token = localStorage.getItem("token");
-          await axios.delete(`http://localhost:3000/product/${product.id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          fetchProducts();
-          resolve();
-        } catch (error) {
-          console.error("Erro ao deletar produto:", error);
-          reject(error);
-        }
-      }),
-      {
-        loading: "Excluindo produto...",
-        success: "Produto excluído com sucesso!",
-        error: "Erro ao excluir produto. Tente novamente.",
-      }
-    );
+    await toast.promise(apiDeleteProduct(product.id).then(fetchProducts), {
+      loading: "Excluindo produto...",
+      success: "Produto excluído com sucesso!",
+      error: "Erro ao excluir produto. Tente novamente.",
+    });
   };
 
   const handleLogout = () => {

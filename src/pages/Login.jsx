@@ -4,6 +4,7 @@ import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
 import Logo from "../assets/Logo.png";
+import api from "../services/api";
 
 function Login({ theme, setTheme }) {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ function Login({ theme, setTheme }) {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await api.post("/auth/login", {
         email: email,
         password: password,
       });
