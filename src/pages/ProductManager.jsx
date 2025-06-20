@@ -19,6 +19,7 @@ import {
   createProduct,
   updateProduct as apiUpdateProduct,
   deleteProduct as apiDeleteProduct,
+  getImageUrl,
 } from "../services/api";
 
 // IMPORTS
@@ -81,7 +82,7 @@ const ProductManager = ({ theme, setTheme }) => {
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Erro ao buscar produtos:", err);
-      setProducts([]); // fallback para não quebrar o .filter
+      setProducts([]);
     }
   };
   useEffect(() => {
@@ -249,6 +250,8 @@ const ProductManager = ({ theme, setTheme }) => {
     navigate("/");
   };
 
+  const logoUrl = company?.image ? getImageUrl(company.image) : Logo;
+
   const backgroundClass =
     theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-300 text-black";
 
@@ -260,7 +263,7 @@ const ProductManager = ({ theme, setTheme }) => {
     >
       <div className="flex justify-center items-center">
         <img
-          src={company?.image ? `http://localhost:3000${company.image}` : Logo}
+          src={logoUrl}
           alt="Logo"
           className="flex justify-center items-center w-15 sm:w-20 mt-2 mb-1 h-auto object-contain rounded-xl"
         />

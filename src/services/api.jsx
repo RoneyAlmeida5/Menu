@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://1ff6-200-150-246-50.ngrok-free.app",
+  baseURL: "https://bef3-200-150-246-50.ngrok-free.app",
 });
 
 // Funções com token
@@ -54,7 +54,6 @@ export const fetchProducts = async (menuId) => {
     ...authHeaders(),
     params,
   });
-  console.log("Dados recebidos da API:", response.data);
   return response.data;
 };
 
@@ -88,5 +87,10 @@ export async function createUser(userData) {
   const response = await api.post("/users", userData);
   return response.data;
 }
+
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return "";
+  return `${api.defaults.baseURL}${imagePath}?ngrok-skip-browser-warning=true`;
+};
 
 export default api;

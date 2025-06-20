@@ -1,11 +1,10 @@
 import React from "react";
 import ErrorBanner from "../../assets/errorbanner.png";
+import { getImageUrl } from "../../services/api";
 
 const BannerPromo = ({ company }) => {
   const bannerUrl =
-    company && company.banner
-      ? `http://localhost:3000${company.banner}`
-      : ErrorBanner;
+    company && company.banner ? getImageUrl(company.banner) : ErrorBanner;
 
   return (
     <div className="mb-6">

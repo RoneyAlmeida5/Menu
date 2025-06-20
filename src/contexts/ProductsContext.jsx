@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState } from "react";
-import BannerCard from "../assets/bannercard.jpeg";
 
 const ProductsContext = createContext();
 
@@ -8,7 +7,6 @@ const initialProducts = [
     id: 1,
     name: "Bolo de Chocolate com Morango",
     value: "49,90",
-    img: BannerCard,
     description:
       "Delicioso bolo de chocolate com morango fresco e cobertura cremosa de avelã.",
     category: "Bolos",
@@ -17,7 +15,6 @@ const initialProducts = [
     id: 7,
     name: "Hambúrguer Clássico",
     value: "29,90",
-    img: "https://blog.biglar.com.br/wp-content/uploads/2024/08/iStock-1398630614.jpg",
     description:
       "Um delicioso hambúrguer com carne suculenta, queijo, alface e tomate.",
     category: "Hamburger",
@@ -26,7 +23,6 @@ const initialProducts = [
     id: 8,
     name: "Sorvete Napolitano",
     value: "19,90",
-    img: "https://blog.gsuplementos.com.br/wp-content/uploads/2020/11/iStock-1173381958.jpg",
     description: "Sorvete Cremoso",
     category: "Bebidas",
   },

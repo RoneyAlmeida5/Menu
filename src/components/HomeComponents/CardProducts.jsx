@@ -3,12 +3,14 @@ import { IconButton, Tooltip } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import { useCart } from "../../contexts/CartContext";
+import { getImageUrl } from "../../services/api";
 
 const CardProducts = ({ item, handleOpen, theme }) => {
   const { addToCart } = useCart();
   const backgroundClass =
     theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black";
   const priceColorClass = theme === "dark" ? "text-blue-400" : "text-blue-600";
+  const imageUrl = item.image ? getImageUrl(item.image) : "";
 
   const handleAddToCart = () => {
     const productToAdd = {
@@ -25,11 +27,17 @@ const CardProducts = ({ item, handleOpen, theme }) => {
     <div
       className={`${backgroundClass} p-4 rounded-lg shadow-md hover:scale-105 transition-transform`}
     >
-      <img
-        src={`http://localhost:3000${item.image}`}
-        alt={item.name}
-        className="w-full h-60 object-cover rounded-md mb-2"
-      />
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={item.name}
+          className="w-full h-60 object-cover rounded-md mb-2"
+        />
+      ) : (
+        <div className="w-full h-60 bg-gray-300 dark:bg-gray-700 flex items-center justify-center rounded-md mb-2">
+          <span className="text-gray-500 dark:text-gray-400">Sem Imagem</span>
+        </div>
+      )}
       <div className="mt-auto flex justify-end-safe space-x-2">
         <div className="mt-auto w-full flex flex-col items-start space-y-1">
           <h3 className="text-lg font-semibold">{item.name}</h3>
