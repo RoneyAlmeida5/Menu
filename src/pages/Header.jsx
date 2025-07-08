@@ -9,7 +9,8 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ThemeToggle from "../components/HeaderComponents/ThemeToggle";
 import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { fetchCompany, fetchMenus, deleteMenu } from "../services/api";
+import { getImageUrl } from "../services/api";
 
 function Header({ theme, setTheme }) {
   const headerRef = useRef(null);
@@ -30,34 +31,22 @@ function Header({ theme, setTheme }) {
 
   // EFFECT PARA REQ IMG COMPANY
   useEffect(() => {
-    const fetchCompany = async () => {
+    const loadCompany = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/companies/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setCompany(response.data);
+        const data = await fetchCompany();
+        setCompany(data);
       } catch (error) {
         console.error("Erro ao buscar dados da empresa:", error);
       }
     };
 
-    fetchCompany();
+    loadCompany();
   }, []);
 
   // EFFECT PARA REQ DE MENU
-  const fetchMenus = async () => {
+  const fetchMenusHandler = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:3000/menu", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const fetchedMenus = response.data || [];
+      const fetchedMenus = await fetchMenus();
 
       const menusWithIcons = [
         {
@@ -78,16 +67,13 @@ function Header({ theme, setTheme }) {
     }
   };
   useEffect(() => {
-    fetchMenus();
+    fetchMenusHandler();
   }, [refreshMenus]);
   const handleDeleteMenu = async (menu) => {
     await toast.promise(
       new Promise(async (resolve, reject) => {
         try {
-          const token = localStorage.getItem("token");
-          await axios.delete(`http://localhost:3000/menu/${menu.id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          await deleteMenu(menu.id);
           fetchMenus();
           if (selectedMenu.id === menu.id) {
             updateSelectedTitle({ name: "Menu Completo", id: null });
@@ -175,11 +161,8 @@ function Header({ theme, setTheme }) {
             )}
           </button>
           <img
-            src={
-              company?.image ? `http://localhost:3000${company.image}` : Logo
-            }
-            alt="Logo"
-            className="w-15 mr-4 rounded-xl mt-2 object-contain"
+            className="w-12 mr-4 rounded-xl mt-2 object-contain"
+            src={company?.image ? getImageUrl(company.image) : Logo}
           />
         </div>
         {!mobileMenuOpen && (
@@ -234,11 +217,8 @@ function Header({ theme, setTheme }) {
       >
         <div className="mb-6">
           <img
-            src={
-              company?.image ? `http://localhost:3000${company.image}` : Logo
-            }
-            alt="Logo"
             className="w-12 sm:w-32 mt-2 h-auto object-contain rounded-xl"
+            src={company?.image ? getImageUrl(company.image) : Logo}
           />
         </div>
         <nav className="w-full flex-1 mt-1">

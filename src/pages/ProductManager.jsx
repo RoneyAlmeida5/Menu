@@ -23,7 +23,6 @@ import {
 } from "../services/api";
 
 // IMPORTS
-import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingModals from "../components/ProductManager/LoadingModals";
 import { useProducts } from "../contexts/ProductsContext";
@@ -271,7 +270,7 @@ const ProductManager = ({ theme, setTheme }) => {
 
       <Header theme={theme} setTheme={setTheme} />
 
-      <div className="overflow-y-auto px-4 sm:px-6 pb-6">
+      <div className="mt-4 overflow-y-auto px-4 sm:px-6 pb-6">
         <div className="mb-5 mt-1">
           <SearchBar onSearch={handleSearch} theme={theme} />
         </div>
@@ -369,7 +368,7 @@ const ProductManager = ({ theme, setTheme }) => {
           setOpenModalMenu={setOpenModalMenu}
           theme={theme}
         />
-        <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+        <h2 className="mt-6 text-xl sm:text-2xl font-semibold mb-4">
           {searchTerm ? `Pesquisa: ${searchTerm}` : selectedMenu?.name}
         </h2>
 

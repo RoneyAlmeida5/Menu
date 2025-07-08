@@ -42,8 +42,18 @@ export const createMenu = async (menu) => {
   return response.data;
 };
 
+export const fetchMenus = async () => {
+  const response = await api.get("/menu", authHeaders());
+  return response.data;
+};
+
 export const updateMenu = async (id, menu) => {
   const response = await api.put(`/menu/${id}`, menu, authHeaders());
+  return response.data;
+};
+
+export const deleteMenu = async (id) => {
+  const response = await api.delete(`/menu/${id}`, authHeaders());
   return response.data;
 };
 
