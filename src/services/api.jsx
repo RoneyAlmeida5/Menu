@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://bef3-200-150-246-50.ngrok-free.app",
+  baseURL: "https://780add5945d0.ngrok-free.app",
 });
 
 // Funções com token
@@ -88,9 +88,10 @@ export async function createUser(userData) {
   return response.data;
 }
 
-export const getImageUrl = (imagePath) => {
-  if (!imagePath) return "";
-  return `${api.defaults.baseURL}${imagePath}?ngrok-skip-browser-warning=true`;
+export const getImageUrl = (path) => {
+  if (!path) return "";
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
+  return `${baseURL}${path.startsWith("/") ? path : `/${path}`}`;
 };
 
 export default api;

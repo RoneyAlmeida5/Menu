@@ -9,6 +9,7 @@ const CardProductsManager = ({ item, onEdit, onDelete, theme }) => {
     theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black";
   const priceColorClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
   const imageUrl = item.image ? getImageUrl(item.image) : "";
+  console.log("URL da imagem:", imageUrl);
 
   return (
     <div
