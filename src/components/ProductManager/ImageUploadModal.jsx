@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal } from "@mui/material";
 import toast from "react-hot-toast";
+import { getImageUrl } from "../../services/api";
 
 const ImageUploadModal = ({
   isOpen,
@@ -99,7 +100,7 @@ const ImageUploadModal = ({
               ) : (
                 company?.image && (
                   <img
-                    src={`http://localhost:3000${company.image}`}
+                    src={getImageUrl(company.image)}
                     alt="Logo atual"
                     className="w-32 h-32 object-cover rounded-full border-4 border-gray-400 shadow-lg"
                   />
@@ -147,7 +148,7 @@ const ImageUploadModal = ({
               )}
               {company?.banner && !preview && (
                 <img
-                  src={`http://localhost:3000${company.banner}`}
+                  src={getImageUrl(company.banner)}
                   alt="Banner atual"
                   className="w-full h-48 object-cover rounded-lg shadow-lg border border-gray-200"
                 />

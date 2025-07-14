@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://780add5945d0.ngrok-free.app",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 // Funções com token
