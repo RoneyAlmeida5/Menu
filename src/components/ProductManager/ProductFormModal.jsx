@@ -4,7 +4,7 @@ import { FiImage } from "react-icons/fi";
 import LoadingModals from "../ProductManager/LoadingModals";
 import toast, { Toaster } from "react-hot-toast";
 import Select from "react-select";
-import axios from "axios";
+import { fetchMenus } from "../../services/api";
 
 const ProductFormModal = ({
   productForm,
@@ -23,13 +23,10 @@ const ProductFormModal = ({
   const baseClass = isDark ? "bg-gray-800 text-white" : "bg-white text-black";
 
   useEffect(() => {
-    const fetchMenus = async () => {
+    const loadMenus = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/menu", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMenus(response.data);
+        const data = await fetchMenus();
+        setMenus(data);
       } catch (error) {
         console.error("Erro ao buscar menus:", error);
         toast.error("Erro ao carregar menus.");
@@ -37,7 +34,7 @@ const ProductFormModal = ({
     };
 
     if (openModalProduct) {
-      fetchMenus();
+      loadMenus();
     }
   }, [openModalProduct]);
 
